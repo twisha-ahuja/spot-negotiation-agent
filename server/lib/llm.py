@@ -12,11 +12,11 @@ MODEL_MAP = {
     # Disabled until Vertex AI credentials are set up (either
     # `gcloud auth application-default login` or VERTEX_CREDENTIALS_JSON) -
     # see README's Deploying to Vercel section.
-    # "claude-negotiator": {
-    #     "model": "vertex_ai/claude-sonnet-4-6",
-    #     "vertex_project": os.environ.get("VERTEX_PROJECT_ID"),
-    #     "vertex_location": os.environ.get("VERTEX_LOCATION"),
-    # },
+    "claude-negotiator": {
+        "model": "vertex_ai/claude-sonnet-4-6",
+        "vertex_project": os.environ.get("VERTEX_PROJECT_ID"),
+        "vertex_location": os.environ.get("VERTEX_LOCATION"),
+    },
     # "gpt-negotiator": {
     #     "model": "openai/gpt-4.1",
     # },
@@ -39,7 +39,9 @@ def _vertex_credentials() -> dict | None:
     # at, so Vertex auth there comes from a service account key pasted whole
     # into an env var. Locally, ADC handles it and this stays unset.
     raw = os.environ.get("VERTEX_CREDENTIALS_JSON")
-    return json.loads(raw) if raw else None
+    if raw:
+        json.loads(raw)  # validate it's parseable JSON before handing it off
+    return raw
 
 
 async def call_model(model: str, messages: list[dict]) -> str:

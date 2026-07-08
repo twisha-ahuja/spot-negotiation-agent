@@ -11,7 +11,7 @@ import { loadHistory, saveRun, clearHistory } from "./history";
 const STATIC_MODELS = [
   // Disabled until Vertex AI credentials are set up server-side - see
   // README's Deploying to Vercel section.
-  // { id: "claude-negotiator", label: "Claude" },
+  { id: "claude-negotiator", label: "Claude - Sonnet 4.6" },
   // { id: "gpt-negotiator", label: "GPT" },
 ];
 
@@ -64,7 +64,7 @@ export default function App() {
   const [model, setModel] = useState(STATIC_MODELS[0]?.id ?? "");
   const [geminiModels, setGeminiModels] = useState([]);
   const models = [
-    // ...STATIC_MODELS,
+    ...STATIC_MODELS,
     ...geminiModels.map((m) => ({ id: m.id, label: `Gemini - ${m.name}` })),
   ];
   const [promptDirty, setPromptDirty] = useState(false);

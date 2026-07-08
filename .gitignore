@@ -4,3 +4,11 @@
 */.env.*
 dist
 __pycache__
+server/venv/
+server/__pycache__/
+server/**/__pycache__/
+client/node_modules/
+client/dist/
+proxy/.env
+server/.env
+api/__pycache__/**
