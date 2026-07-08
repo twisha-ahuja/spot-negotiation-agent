@@ -1,3 +1,4 @@
+
 # Freight negotiation POC
 
 A human plays the transporter and negotiates a freight rate, in chat, against
