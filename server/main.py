@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -147,5 +146,6 @@ async def send_message(session_id: str, req: MessageRequest):
 
 
 if __name__ == "__main__":
+    import uvicorn
 
     uvicorn.run("main:app", host="0.0.0.0", port=3001, reload=True)
