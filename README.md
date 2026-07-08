@@ -3,7 +3,7 @@
 A human plays the transporter and negotiates a freight rate, in chat, against
 an AI procurement agent (Claude, GPT, or Gemini - swappable per session). The
 AI has a hardcoded target rate and walk-away rate that are never shown to the
-human. Every call is optionally traced to Langfuse.---
+human. Every call is optionally traced to Langfuse.
 
 <!-- tp -->
 
