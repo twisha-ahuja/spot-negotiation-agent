@@ -97,17 +97,20 @@ no env var needed locally.
 
 ## Deploying to Vercel
 
-The whole app (client + backend) deploys as a single Vercel project:
+The whole app (client + backend) deploys as a single Vercel project using
+[Vercel Services](https://vercel.com/docs/services), defined in `vercel.json`:
 
-- `client/` is built as the static frontend (`vercel.json`'s `buildCommand`/
-  `outputDirectory` point at it).
-- `api/index.py` is a thin entrypoint that imports the FastAPI `app` from
-  `server/main.py`. `vercel.json` rewrites every `/api/*` request to it, so
-  FastAPI's own routes (which already start with `/api/...`) match unchanged.
-  `functions.includeFiles` bundles the whole `server/` directory (including
-  `config/lanes.json` and `config/gemini_models.json`, which are read via
-  `open()` at runtime rather than imported, so Vercel's import tracer
-  wouldn't pick them up on its own).
+- `client` service (`root: "client/"`) builds and serves the static frontend.
+- `server` service (`root: "server/"`, `entrypoint: "main:app"`) is built like
+  a standalone FastAPI project rooted at `server/` - Vercel installs
+  `server/requirements.txt` directly and runs `main.py` with `server/` as its
+  working root, matching local dev (`cd server && uvicorn main:app`).
+- A top-level rewrite sends `/api/*` to the `server` service unchanged, so
+  FastAPI's own routes (which already start with `/api/...`) match as-is;
+  everything else goes to `client`.
+- `config/lanes.json` and `config/gemini_models.json` (read via `open()`
+  rather than imported) are included automatically - Python services get no
+  import-based tree-shaking.
 - Because serverless functions share no memory between invocations, sessions
   **must** be backed by MongoDB in production - set `MONGODB_URI` in the
   Vercel project's environment variables, or every negotiation will 404 on
