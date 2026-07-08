@@ -1,0 +1,23 @@
+model_list:
+  - model_name: claude-negotiator
+    litellm_params:
+      model: vertex_ai/claude-sonnet-4-6
+      vertex_project: os.environ/VERTEX_PROJECT_ID
+      vertex_location: os.environ/VERTEX_LOCATION
+
+  - model_name: gpt-negotiator
+    litellm_params:
+      model: openai/gpt-4.1
+      api_key: os.environ/OPENAI_API_KEY
+
+  # Wildcard route - matches any "gemini/<model-id>" the client sends, so
+  # newly released Gemini models work without a config change here. The
+  # server's /api/models/gemini endpoint fetches the live model list from
+  # Google and the client sends back whichever id the user picked.
+  - model_name: "gemini/*"
+    litellm_params:
+      model: "gemini/*"
+      api_key: os.environ/GEMINI_API_KEY
+
+litellm_settings:
+  drop_params: true
