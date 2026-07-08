@@ -1,5 +1,5 @@
 {
-  "installCommand": "cd client && npm install",
+  "installCommand": "pip install -r requirements.txt && cd client && npm install",
   "buildCommand": "cd client && npm run build",
   "outputDirectory": "client/dist",
   "functions": {
