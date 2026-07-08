@@ -1,0 +1,23 @@
+{
+  "mumbai-delhi-20ft": {
+    "name": "Mumbai to Delhi, 20ft container",
+    "target_rate": 45000,
+    "walk_away_rate": 52000,
+    "currency": "INR",
+    "max_rounds": 8
+  },
+  "chennai-bangalore-32ft": {
+    "name": "Chennai to Bangalore, 32ft multi-axle",
+    "target_rate": 28000,
+    "walk_away_rate": 33000,
+    "currency": "INR",
+    "max_rounds": 6
+  },
+  "pune-hyderabad-lcl": {
+    "name": "Pune to Hyderabad, LCL shipment",
+    "target_rate": 12000,
+    "walk_away_rate": 15500,
+    "currency": "INR",
+    "max_rounds": 6
+  }
+}
