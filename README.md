@@ -5,8 +5,6 @@ an AI procurement agent (Claude, GPT, or Gemini - swappable per session). The
 AI has a hardcoded target rate and walk-away rate that are never shown to the
 human. Every call is optionally traced to Langfuse.
 
-<!-- tp -->
-
 Two pieces, run in two terminals:
 
 ```
