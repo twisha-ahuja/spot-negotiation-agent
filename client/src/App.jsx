@@ -422,7 +422,7 @@ export default function App() {
             {loading ? "Starting..." : mode === "idle" ? "Run negotiation" : "Run again"}
           </button>
 
-          <div className="history">
+          {/* <div className="history">
             <div className="history-header">
               <h3>History ({history.length})</h3>
               {history.length > 0 && (
@@ -456,7 +456,7 @@ export default function App() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
 
         <div className="pane negotiation-pane">
