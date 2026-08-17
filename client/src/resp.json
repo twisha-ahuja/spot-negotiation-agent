@@ -1,0 +1,1588 @@
+{
+    "id": "7a32b6110216011fc35f68d9416671a6",
+    "projectId": "cmsiko8p00076ad0jfr9ztpok",
+    "name": "negotiation_turn",
+    "timestamp": "2026-08-14T06:48:54.188Z",
+    "environment": "default",
+    "tags": [
+        "enquiry:b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802",
+        "round:1",
+        "transporter:IND005008"
+    ],
+    "bookmarked": false,
+    "release": null,
+    "version": null,
+    "userId": null,
+    "sessionId": "b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802:IND005008",
+    "public": false,
+    "input": "Transporter IND005008 has quoted 34000.0 for Spot b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802. Target rate and walkaway rate are already set (fixed) for this enquiry: target=17000.0, walkaway=21250.0. Do not call set_negotiation_rates — it will be rejected.\nThis is round 1 — no prior rounds for this transporter.\nUse the available tools as needed (spot details, rate benchmarks, prior negotiation rounds) and decide whether to propose a counter offer.",
+    "output": {
+        "final_decision": {
+            "amount": 20500,
+            "reasoning": "Opened at ₹20,500 — sole bidder with rank visibility sees they're L1, often anchors firm; intra-city route with huge 50% gap to target suggests realistic opening closer to walkaway. 48min bidding window demands faster convergence than wide opening. Positioned to leave room for several rounds without running out of time."
+        },
+        "decline_reasoning": null,
+        "counter_offer_failed": false
+    },
+    "metadata": {
+        "domain": "thelogisticsnow.com",
+        "truck_enquiry_id": "b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802",
+        "transporter_id": "IND005008",
+        "round": 1,
+        "model": "claude-haiku-4-5",
+        "rid": "b2b24e12/IND005008",
+        "num_turns": 5,
+        "duration_api_ms": 20305,
+        "sdk_session_id": "0041ec2c-438e-4ec2-a7ee-01edfdbb22aa",
+        "resourceAttributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.44.0",
+            "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+            "service.name": "unknown_service"
+        },
+        "scope": {
+            "name": "langfuse-sdk",
+            "version": "4.14.1",
+            "attributes": {
+                "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+            }
+        }
+    },
+    "createdAt": "2026-08-14T06:49:12.000Z",
+    "updatedAt": "2026-08-14T06:49:27.915Z",
+    "externalId": null,
+    "scores": [],
+    "latency": 32.844,
+    "observations": [
+        {
+            "id": "b2937b1a8b7f5ae0",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:48:54.188Z",
+            "endTime": "2026-08-14T06:49:27.032Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": null,
+            "type": "AGENT",
+            "environment": "default",
+            "name": "negotiation_turn",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": "Transporter IND005008 has quoted 34000.0 for Spot b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802. Target rate and walkaway rate are already set (fixed) for this enquiry: target=17000.0, walkaway=21250.0. Do not call set_negotiation_rates — it will be rejected.\nThis is round 1 — no prior rounds for this transporter.\nUse the available tools as needed (spot details, rate benchmarks, prior negotiation rounds) and decide whether to propose a counter offer.",
+            "output": {
+                "final_decision": {
+                    "amount": 20500,
+                    "reasoning": "Opened at ₹20,500 — sole bidder with rank visibility sees they're L1, often anchors firm; intra-city route with huge 50% gap to target suggests realistic opening closer to walkaway. 48min bidding window demands faster convergence than wide opening. Positioned to leave room for several rounds without running out of time."
+                },
+                "decline_reasoning": null,
+                "counter_offer_failed": false
+            },
+            "metadata": {
+                "domain": "thelogisticsnow.com",
+                "truck_enquiry_id": "b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802",
+                "transporter_id": "IND005008",
+                "round": 1,
+                "model": "claude-haiku-4-5",
+                "rid": "b2b24e12/IND005008",
+                "num_turns": 5,
+                "duration_api_ms": 20305,
+                "sdk_session_id": "0041ec2c-438e-4ec2-a7ee-01edfdbb22aa",
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": {},
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 32.844,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "fa0d9287945c8cdb",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:26.862Z",
+            "endTime": null,
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "EVENT",
+            "environment": "default",
+            "name": "reasoning",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": "**Counter submitted:** ₹20,500 (39.7% reduction from their ₹34,000 opening).\n\n**Rationale for business users:**\nSole bidder ranked first tends to hold firm; massive target-walkaway gap with no lane history argues for realistic opening closer to walkaway, not a wide anchor. 48-minute bidding window demands faster path to deal than a typical multi-round taper. Positioned to leave breathing room for several rounds if transporter moves.",
+            "output": null,
+            "metadata": {
+                "usage": {
+                    "input_tokens": 5,
+                    "cache_creation_input_tokens": 802,
+                    "cache_read_input_tokens": 33918,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 802,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": null,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "3e11730af29c3812",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:26.874Z",
+            "endTime": "2026-08-14T06:49:26.874Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "GENERATION",
+            "environment": "default",
+            "name": "claude_agent_turn",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "num_turns": 5,
+                "duration_api_ms": 20305,
+                "sdk_session_id": "0041ec2c-438e-4ec2-a7ee-01edfdbb22aa",
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": "claude-haiku-4-5",
+            "modelParameters": {},
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0,
+            "timeToFirstToken": null,
+            "usageDetails": {
+                "input": 22,
+                "output": 1472,
+                "cache_read_input_tokens": 63271,
+                "cache_creation_input_tokens": 38298,
+                "total": 103063
+            },
+            "costDetails": {
+                "total": 0.0615816
+            },
+            "usagePricingTierId": "cmgt5gnkv000104jx171tbq4e_tier_default",
+            "usagePricingTierName": "Standard",
+            "inputPrice": 0.000001,
+            "outputPrice": 0.000005,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0.0615816,
+            "unit": "TOKENS",
+            "promptTokens": 22,
+            "completionTokens": 1472,
+            "totalTokens": 103063,
+            "modelId": "cmgt5gnkv000104jx171tbq4e",
+            "usage": {
+                "unit": "TOKENS",
+                "input": 22,
+                "output": 1472,
+                "total": 103063
+            }
+        },
+        {
+            "id": "36b135cfadabf00d",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:26.875Z",
+            "endTime": "2026-08-14T06:49:26.875Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "46c19dd90177a022",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:21.082Z",
+            "endTime": "2026-08-14T06:49:22.141Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 1.059,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "5aa3adb16c9de1b0",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:23.271Z",
+            "endTime": "2026-08-14T06:49:26.861Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 3.59,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "fbdd9e764a3e6806",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:26.862Z",
+            "endTime": "2026-08-14T06:49:26.872Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.01,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "807922c6e10a1f30",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:22.144Z",
+            "endTime": "2026-08-14T06:49:23.270Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "TOOL",
+            "environment": "default",
+            "name": "mcp__lorri_negotiation_tools__propose_counter_offer",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:27.829Z",
+            "updatedAt": "2026-08-14T06:49:27.829Z",
+            "input": {
+                "amount": 20500,
+                "reasoning": "Opened at ₹20,500 — sole bidder with rank visibility sees they're L1, often anchors firm; intra-city route with huge 50% gap to target suggests realistic opening closer to walkaway. 48min bidding window demands faster convergence than wide opening. Positioned to leave room for several rounds without running out of time."
+            },
+            "output": [
+                {
+                    "type": "text",
+                    "text": "Counter offer of 20500 submitted successfully. Reasoning: Opened at ₹20,500 — sole bidder with rank visibility sees they're L1, often anchors firm; intra-city route with huge 50% gap to target suggests realistic opening closer to walkaway. 48min bidding window demands faster convergence than wide opening. Positioned to leave room for several rounds without running out of time."
+                }
+            ],
+            "metadata": {
+                "usage": {
+                    "input_tokens": 7,
+                    "cache_creation_input_tokens": 4565,
+                    "cache_read_input_tokens": 29353,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 4565,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": {},
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 1.126,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "c8bd287e4f7ac56a",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:21.081Z",
+            "endTime": null,
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "EVENT",
+            "environment": "default",
+            "name": "reasoning",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:22.418Z",
+            "updatedAt": "2026-08-14T06:49:22.418Z",
+            "input": "Analysis:\n\n**Spot context:**\n- **Route:** Bhilai/Durg → Durg (same city, intra-city movement)\n- **Truck:** 1x 15 MT OPENBODY\n- **Bidding window:** 48 minutes remaining — urgency is high, this is a very short window\n- **Field:** Only 1 transporter shortlisted; IND005008 (Sharvil G) is the only bidder, making this an uncontested quote\n- **Network history:** No historical data on this route — cannot ground the target/walkaway rates in past spot rates; they were set by another method\n\n**Company behavior:**\n- **Rank visibility ON:** IND005008 sees their position. Since they're the only bidder (L1), they see themselves as ranked first — this often makes transporters hold firm to their opening, believing they're already competitive.\n- **No-bid-increment ENFORCED:** Any rate increase from them would be off-policy and a red flag.\n\n**The gap:**\n- Quote: ₹34,000\n- Target: ₹17,000 (50% of quote)\n- Walkaway: ₹21,250 (62.5% of quote)\n- The gap is massive — target is exactly half the quote. Without historical lane data, it's unclear if this gap reflects unrealistic target-setting, transporter anchoring bias, or both.\n\n**Decision:**\n\nThe transporter sees they're ranked L1 (sole bidder), which psychologically encourages them to hold firm. The bidding window is 48 minutes — urgency is real, and a negotiation consuming most of that runway risks no deal at all. The route is intra-city (Bhilai/Durg to Durg), which typically commands lower rates, but a 50% gap with no historical precedent suggests either target was set conservatively or this transporter is opening aggressively.\n\n**First counter approach:** Open well below target (to preserve upward room over rounds) but not so far below that the transporter dismisses it as unrealistic. Given the massive gap, I'll open closer to the walkaway boundary — around ₹20,500–₹21,000 — which gives a credible opening position while leaving several rounds to potentially converge. The short bidding window argues for faster convergence than a very wide opening.",
+            "output": null,
+            "metadata": {
+                "usage": {
+                    "input_tokens": 7,
+                    "cache_creation_input_tokens": 4565,
+                    "cache_read_input_tokens": 29353,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 4565,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": null,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "92fd6d0538ce5647",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:12.490Z",
+            "endTime": "2026-08-14T06:49:21.081Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:22.418Z",
+            "updatedAt": "2026-08-14T06:49:22.418Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 8.591,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "0322199d81410ec5",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:11.285Z",
+            "endTime": null,
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "EVENT",
+            "environment": "default",
+            "name": "reasoning",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": "I need to gather context before deciding on a counter. The opening quote of 34000 is nearly double the target rate — I should understand the lane benchmarks, spot details, and company behavior patterns first.",
+            "output": null,
+            "metadata": {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": 32931,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 32931,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": null,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "ff131b32b459c9d3",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:10.576Z",
+            "endTime": null,
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "EVENT",
+            "environment": "default",
+            "name": "reasoning",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": "Let me break down the situation:\n\n1. **Enquiry ID**: b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802\n2. **Transporter**: IND005008\n3. **Opening Quote**: 34000.0\n4. **Target Rate**: 17000.0 (already set)\n5. **Walkaway Rate**: 21250.0 (already set)\n6. **Round**: 1 (no prior rounds)\n\nThis is extremely unusual. The transporter's opening quote of 34000 is almost **double** the target rate of 17000, and significantly above even the walkaway rate of 21250.\n\nBefore I respond, I need to:\n1. Get spot info to understand the lane, cargo, truck count, and other context\n2. Get company negotiation settings to understand how this transporter behaves\n3. Get spot network history to see if this quote is in line with lane norms\n4. Then decide on a counter strategy\n\nThe opening quote being this far above walkaway is a red flag. It suggests either:\n- The transporter has misunderstood the enquiry\n- This is an extremely tight lane\n- The transporter is testing the waters with an inflated opening\n- There's cargo/truck count complexity that makes the per-truck rate different from what I'm thinking\n\nLet me gather the information first before making a decision.",
+            "output": null,
+            "metadata": {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": 32931,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 32931,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": null,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "28559283b9509178",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:11.285Z",
+            "endTime": "2026-08-14T06:49:11.647Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.362,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "68600c7c1ae8983e",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:10.577Z",
+            "endTime": "2026-08-14T06:49:11.284Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.707,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "c52117043c66fa39",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:04.926Z",
+            "endTime": "2026-08-14T06:49:10.575Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.782Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 5.649,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "11fd876c561ee319",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:11.803Z",
+            "endTime": "2026-08-14T06:49:12.417Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "TOOL",
+            "environment": "default",
+            "name": "mcp__lorri_negotiation_tools__get_spot_network_history",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": {
+                "truck_enquiry_id": "b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802"
+            },
+            "output": [
+                {
+                    "type": "text",
+                    "text": "No historical approved spot rates found for Bhilai, Durg, Chhattisgarh -> Durg, Durg, Chhattisgarh (15 MT OPENBODY)."
+                }
+            ],
+            "metadata": {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": 32931,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 32931,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": {},
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.614,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "ba76049c088d35fc",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:12.056Z",
+            "endTime": "2026-08-14T06:49:12.489Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "TOOL",
+            "environment": "default",
+            "name": "mcp__lorri_negotiation_tools__get_company_negotiation_settings",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": {
+                "truck_enquiry_id": "b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802"
+            },
+            "output": [
+                {
+                    "type": "text",
+                    "text": "Company Negotiation Settings for domain thelogisticsnow.com:\n- Rank visibility to transporter: ON — this transporter can see their own rank (L1, L2, ...) among other bidders on this spot. Rank-aware transporters tend to react to their position, not just your counter — a transporter who sees they're not L1 may drop faster on their own; one who sees they're already L1 may hold firm even to a reasonable counter.\n- No-bid-increment: ENFORCED — this transporter is not allowed to raise an already-submitted quote. If you see their rate go up round over round anyway, that's not just an aggressive negotiating style, it's off-policy — treat it as an anomaly worth being cautious about, not normal erratic bidding.\n- 'No regret' quote tag: if a transporter tags a round this way, it's a self-reported claim that this is their floor — the platform stores it and uses it for notification copy only, it never actually blocks further negotiation. Transporters tag this inconsistently and often aren't really at their floor, so treat it as weak signal, not a stop instruction — keep negotiating past it if the numbers still justify it."
+                }
+            ],
+            "metadata": {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": 32931,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 32931,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": {},
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.433,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "f121ff9df742584c",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:11.648Z",
+            "endTime": "2026-08-14T06:49:11.870Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "TOOL",
+            "environment": "default",
+            "name": "mcp__lorri_negotiation_tools__get_spot_info",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:16.782Z",
+            "updatedAt": "2026-08-14T06:49:16.783Z",
+            "input": {
+                "truck_enquiry_id": "b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802"
+            },
+            "output": [
+                {
+                    "type": "text",
+                    "text": "Spot Details for b2b24e12-97aa-11f1-8aa2-ae3399be1414_2026_8_14_063802 (status: open):\n- Route: Bhilai, Durg, Chhattisgarh -> Durg, Durg, Chhattisgarh\n- Truck Required: 1x 15 MT OPENBODY ( )\n- Bidding Window: 0h 48m remaining (closes 2026-08-14T07:38:02.345000+00:00)\n- Enquiry Age: 0h 11m since created\n- Transporters: 1 of 1 shortlisted have quoted\n- Live Rate Spread: 34000.0 - 34000.0 (avg 34000)\n- Per-Transporter Bids:\n  - Sharvil G (IND005008): rate=34000.0, status=pending, rounds=1"
+                }
+            ],
+            "metadata": {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": 32931,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 32931,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1
+                },
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": {},
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.222,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "9e1a0a54c4da72cc",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:04.683Z",
+            "endTime": "2026-08-14T06:49:04.691Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:11.422Z",
+            "updatedAt": "2026-08-14T06:49:11.423Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.008,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "b8eb344e2ba4a997",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:04.700Z",
+            "endTime": "2026-08-14T06:49:04.702Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:11.422Z",
+            "updatedAt": "2026-08-14T06:49:11.423Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.002,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "e8a99bb43cc796e7",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:49:04.722Z",
+            "endTime": "2026-08-14T06:49:04.925Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "waiting_for_model",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:11.422Z",
+            "updatedAt": "2026-08-14T06:49:11.423Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 0.203,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        },
+        {
+            "id": "5fb6812c0419b078",
+            "traceId": "7a32b6110216011fc35f68d9416671a6",
+            "startTime": "2026-08-14T06:48:54.189Z",
+            "endTime": "2026-08-14T06:49:04.683Z",
+            "projectId": "cmsiko8p00076ad0jfr9ztpok",
+            "parentObservationId": "b2937b1a8b7f5ae0",
+            "type": "SPAN",
+            "environment": "default",
+            "name": "connect_and_send_query",
+            "level": "DEFAULT",
+            "statusMessage": null,
+            "version": null,
+            "createdAt": "2026-08-14T06:49:11.422Z",
+            "updatedAt": "2026-08-14T06:49:11.422Z",
+            "input": null,
+            "output": null,
+            "metadata": {
+                "resourceAttributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "3ef38b35-12f9-44d2-9beb-f3366e8b3ec7",
+                    "service.name": "unknown_service"
+                },
+                "scope": {
+                    "name": "langfuse-sdk",
+                    "version": "4.14.1",
+                    "attributes": {
+                        "public_key": "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96"
+                    }
+                }
+            },
+            "model": null,
+            "modelParameters": null,
+            "completionStartTime": null,
+            "promptId": null,
+            "promptName": null,
+            "promptVersion": null,
+            "latency": 10.494,
+            "timeToFirstToken": null,
+            "usageDetails": {},
+            "costDetails": {},
+            "usagePricingTierId": null,
+            "usagePricingTierName": null,
+            "inputPrice": 0,
+            "outputPrice": 0,
+            "totalPrice": 0,
+            "calculatedInputCost": null,
+            "calculatedOutputCost": null,
+            "calculatedTotalCost": 0,
+            "unit": "TOKENS",
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "modelId": null,
+            "usage": {
+                "unit": "TOKENS",
+                "input": 0,
+                "output": 0,
+                "total": 0
+            }
+        }
+    ],
+    "htmlPath": "/project/cmsiko8p00076ad0jfr9ztpok/traces/7a32b6110216011fc35f68d9416671a6",
+    "totalCost": 0.0615816,
+    "_deprecation": {
+        "message": "Langfuse v3 is deprecated; this endpoint will be removed in a future release. In Langfuse v4, read span and trace data via GET /api/public/v2/observations?fromStartTime=<from>&toStartTime=<to>.",
+        "replacement": "GET /api/public/v2/observations?fromStartTime=<from>&toStartTime=<to>",
+        "docsUrl": "https://langfuse.com/docs/api-and-data-platform/features/observations-api"
+    }
+}
