@@ -16,6 +16,8 @@
   --status-ok: #10b981;
   --status-warn: #f59e0b;
   --status-err: #ef4444;
+  --brand-agent: #f59e0b;
+  --brand-agent-text: #000000;
   --radius: 8px;
   /* Slightly smoother */
   --font-sans: 'Inter', sans-serif;
@@ -24,22 +26,25 @@
 }
 
 [data-theme="light"] {
-  /* Light Theme */
-  --bg-page: #f8fafc;
-  --bg-panel: #ffffff;
-  --bg-surface: #f1f5f9;
-  --bg-hover: #e2e8f0;
-  --border-color: #e2e8f0;
-  --border-active: #cbd5e1;
+  /* High-Contrast Light Theme */
+  --bg-page: #eef2f6;          /* Slightly deeper, cooler background */
+  --bg-panel: #ffffff;         /* Pure white panels for pop */
+  --bg-surface: #e2e8f0;       /* Darker surface for inputs to stand out */
+  --bg-hover: #cbd5e1;
+  --border-color: #cbd5e1;     /* Sharper panel borders */
+  --border-active: #94a3b8;    /* High contrast active borders */
   --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-tertiary: #94a3b8;
+  --text-secondary: #475569;   /* Darker secondary text for readability */
+  --text-tertiary: #64748b;
   --accent: #0f172a;
   --accent-inv: #ffffff;
   --status-ok: #059669;
   --status-warn: #d97706;
   --status-err: #dc2626;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --status-warn-content: #ffffff;
+  --brand-agent: #0ea5e9;   /* Sky Blue for Clean Light Mode */
+  --brand-agent-text: #ffffff;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* More defined shadow */
 }
 
 * {
@@ -214,6 +219,7 @@ textarea {
   font-family: var(--font-sans);
   font-size: 13px;
   transition: 0.2s;
+  box-sizing: border-box;
 }
 
 input:disabled,
@@ -516,4 +522,4 @@ select:focus {
 
 .btn-submit:hover:not(:disabled) {
   opacity: 0.8;
-}
+}input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type="number"] { -moz-appearance: textfield; }

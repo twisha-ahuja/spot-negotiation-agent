@@ -177,26 +177,26 @@ export default function AgentTraceView({ activeTrace, loading }) {
                 {showUsageBreakdown && usageData && (
                   <div style={{
                     position: 'absolute', top: 'calc(100% + 4px)', left: '0', 
-                    background: '#18181b', border: '1px solid #3f3f46', borderRadius: '6px',
+                    background: 'var(--bg-panel)', border: '1px solid var(--border-color)', borderRadius: '6px',
                     width: '300px', padding: '16px', zIndex: 100,
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25)',
+                    boxShadow: 'var(--shadow)',
                     display: 'flex', flexDirection: 'column', gap: '16px',
                     cursor: 'default'
                   }}>
-                    <strong style={{color: '#f8fafc', fontSize: '14px'}}>Usage breakdown</strong>
+                    <strong style={{color: 'var(--text-primary)', fontSize: '14px'}}>Usage breakdown</strong>
                     
                     <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                       {Object.entries(usageData)
                         .filter(([k]) => k !== 'total' && k !== 'totalTokens')
                         .map(([key, value]) => (
-                        <div key={key} style={{display: 'flex', justifyContent: 'space-between', color: '#94a3b8'}}>
+                        <div key={key} style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
                           <span>{key}</span>
                           <span>{Number(value).toLocaleString()}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div style={{display: 'flex', justifyContent: 'space-between', color: '#e2e8f0', fontWeight: 600, borderTop: '1px solid #3f3f46', paddingTop: '12px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-primary)', fontWeight: 600, borderTop: '1px solid var(--border-color)', paddingTop: '12px'}}>
                         <span>Total usage</span>
                         <span>{Number(usageData.total || usageData.totalTokens || 0).toLocaleString()}</span>
                     </div>
@@ -208,7 +208,7 @@ export default function AgentTraceView({ activeTrace, loading }) {
 
           {/* Tab Bar Map */}
           <div style={{ display: 'flex', gap: '20px', marginTop: '16px', borderBottom: '1px solid var(--border-color)' }}>
-            <div style={{ paddingBottom: '8px', fontSize: '13px', color: '#a78bfa', borderBottom: '2px solid #a78bfa', fontWeight: 500, cursor: 'pointer' }}>Preview</div>
+            <div style={{ paddingBottom: '8px', fontSize: '13px', color: 'var(--text-primary)', borderBottom: '2px solid var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}>Preview</div>
             <div style={{ paddingBottom: '8px', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 500 }}>Scores</div>
             <div style={{ paddingBottom: '8px', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 500 }}>Log View</div>
           </div>
@@ -237,7 +237,7 @@ export default function AgentTraceView({ activeTrace, loading }) {
                 Input
                 <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>{typeof selectedData.input === 'object' && Object.keys(selectedData.input).length + ' keys'}</span>
               </div>
-              <div style={{ padding: '16px', background: 'var(--bg-page)', color: '#3b82f6', fontSize: '12px', fontFamily: 'var(--font-mono)', overflowX: 'auto', borderLeft: '3px solid #3b82f6' }}>
+              <div style={{ padding: '16px', background: 'var(--bg-page)', color: 'var(--text-primary)', fontSize: '12px', fontFamily: 'var(--font-mono)', overflowX: 'auto', borderLeft: '3px solid #3b82f6' }}>
                 <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
                   {typeof selectedData.input === 'string'
                     ? `input: ${JSON.stringify(selectedData.input)}`
@@ -255,7 +255,7 @@ export default function AgentTraceView({ activeTrace, loading }) {
                 Output
                 <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>{typeof selectedData.output === 'object' && Object.keys(selectedData.output).length + ' keys'}</span>
               </div>
-              <div style={{ padding: '16px', background: 'var(--bg-page)', color: '#10b981', fontSize: '12px', fontFamily: 'var(--font-mono)', overflowX: 'auto', borderLeft: '3px solid #10b981' }}>
+              <div style={{ padding: '16px', background: 'var(--bg-page)', color: 'var(--text-primary)', fontSize: '12px', fontFamily: 'var(--font-mono)', overflowX: 'auto', borderLeft: '3px solid #10b981' }}>
                 <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
                   {typeof selectedData.output === 'string'
                     ? `output: ${JSON.stringify(selectedData.output)}`

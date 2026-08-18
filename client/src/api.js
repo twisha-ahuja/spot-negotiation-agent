@@ -1,4 +1,23 @@
 import sampleTrace from './resp.json';
+import sampleSpot from './spot.json';
+
+export async function validateAdhocId(adhocId) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        spotDetails: {
+          originCity: sampleSpot.lane_details?.origin?.location?.location || 'Unknown Origin',
+          originState: sampleSpot.lane_details?.origin?.location?.state || '',
+          destCity: sampleSpot.lane_details?.destination?.location?.location || 'Unknown Dest',
+          destState: sampleSpot.lane_details?.destination?.location?.state || '',
+          truckType: sampleSpot.lane_details?.truck_types?.label || 'Unknown Truck',
+          tonnage: sampleSpot.lane_details?.tonnage || '0'
+        },
+        lsps: sampleSpot.benchmark_transporter_list?.map(t => t.transporter_name) || []
+      });
+    }, 700);
+  });
+}
 
 export async function startSession(config) {
   window.mockRound = 0;
