@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react'
 import Location from 'react-autosuggest'
 import debounce from 'lodash/debounce'
-import './Autocomplete.css'
+import styles from '../styles/Autocomplete.module.css'
 
 const AutoComplete = ({
     onSelect,
@@ -15,7 +15,8 @@ const AutoComplete = ({
     payloadKey = '',
     inputClassName = '',
     id = 'Autosuggets_Input_id',
-    localData = null
+    localData = null,
+    disabled = false
 }) => {
     const [suggestions, setSuggestions] = useState([])
     const [show, setShow] = useState(false)
@@ -84,12 +85,12 @@ const AutoComplete = ({
         placeholder: placeholder,
         id: id,
         className: inputClassName,
+        disabled: disabled
     }
 
     return (
         <div className="Loader-Container">
             <Location
-                style={{ color: "black" }}
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={onSuggestionsClearRequested}

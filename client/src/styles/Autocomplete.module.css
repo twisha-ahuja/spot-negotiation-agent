@@ -1,40 +1,42 @@
-.react-autosuggest__container {
+:global(.react-autosuggest__container) {
     position: relative;
     border-radius: 20px;
     width: 100%;
 }
 
-.react-autosuggest__input {
+:global(.react-autosuggest__input) {
     width: 100%;
-    height: 30px;
-    padding: 10px 20px;
+    padding: 10px 12px;
     font-family: Helvetica, sans-serif;
     font-weight: 300;
-    font-size: 16px;
+    font-size: 13px;
     border: 1px solid var(--border-color);
     background-color: var(--bg-surface);
     color: var(--text-primary);
     border-radius: 4px;
     margin: 0px !important;
+    box-sizing: border-box;
+    display: block;
 }
 
-.react-autosuggest__input--focused {
+:global(.react-autosuggest__input--focused) {
     outline: none;
+    border-color: var(--text-primary);
 }
 
-.react-autosuggest__input--open {
+:global(.react-autosuggest__input--open) {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-.react-autosuggest__suggestions-container {
+:global(.react-autosuggest__suggestions-container) {
     display: none;
 }
 
-.react-autosuggest__suggestions-container--open {
+:global(.react-autosuggest__suggestions-container--open) {
     display: block;
     position: absolute;
-    top: 51px;
+    top: 100%;
     background-color: var(--bg-panel);
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -45,41 +47,40 @@
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
     max-height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: auto;
     white-space: nowrap;
     width: 100%;
     z-index: 9999;
 }
 
-.react-autosuggest__suggestions-list {
+:global(.react-autosuggest__suggestions-list) {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
-.react-autosuggest__suggestion {
+:global(.react-autosuggest__suggestion) {
     cursor: pointer;
     padding: 8px 12px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.react-autosuggest__suggestion:last-child {
+:global(.react-autosuggest__suggestion:last-child) {
     border-bottom: none;
 }
 
-.react-autosuggest__suggestion--highlighted {
+:global(.react-autosuggest__suggestion--highlighted) {
     background-color: var(--bg-surface);
 }
 
-.Loader-Container {
+:global(.Loader-Container) {
     width: 100%;
-    display: flex;
-    justify-content: center;
+    display: block;
     position: relative;
 }
 
-.preloader-wrapper {
+:global(.preloader-wrapper) {
     position: absolute;
     right: 1%;
     top: 25%;
@@ -87,28 +88,24 @@
     height: 25px !important;
 }
 
-#Autosuggets_Input_id {
+:global(#Autosuggets_Input_id) {
     width: 100%;
 }
 
-.Spinner-Container {
+:global(.Spinner-Container) {
     position: absolute;
-    right: 2%;
-}
-
-.custom-spin {
-    font-size: 24px;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 @media only screen and (max-width: 600px) {
-    .Loader-Container {
-        width: 80%;
-        display: flex;
-        justify-content: center;
-        padding-right: 5%;
+    :global(.Loader-Container) {
+        width: 100%;
+        display: block;
     }
 
-    #Autosuggets_Input_id {
-        width: 137%;
+    :global(#Autosuggets_Input_id) {
+        width: 100%;
     }
 }

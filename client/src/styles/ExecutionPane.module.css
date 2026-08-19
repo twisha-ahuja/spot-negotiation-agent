@@ -1,0 +1,457 @@
+.executionPane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--bg-page);
+  padding: 32px;
+  overflow: hidden;
+}
+
+.emptyState {
+  justify-content: center;
+  align-items: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+.emptyStateIcon {
+  opacity: 0.2;
+  margin-bottom: 16px;
+}
+
+.executionSplit {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.roundsColumn {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.roundsHeader {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.roundsTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.roundsTitleText {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.roundsCount {
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-page);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 8px 8px 30px;
+  font-size: 12px;
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 9px;
+  color: var(--text-tertiary);
+}
+
+.roundsList {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg-panel);
+}
+
+.roundCard {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.roundCard.active {
+  background: var(--bg-surface);
+  border-left: 3px solid #3b82f6;
+}
+.roundCard.inactive {
+  background: transparent;
+  border-left: 3px solid transparent;
+}
+
+.roundCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.roundCardTitle {
+  font-size: 13px;
+  font-weight: 600;
+}
+.roundCardTitle.active {
+  color: var(--text-primary);
+}
+.roundCardTitle.inactive {
+  color: var(--text-secondary);
+}
+
+.roundCardStatus {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.roundCardStatus.accepted {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.roundCardStatus.ongoing {
+  color: #a78bfa;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.roundCardTraceId {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+}
+
+.roundCardMetrics {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.metricItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.liveConsole {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.headerText {
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.headerSubtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ratesBox {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: var(--bg-surface);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.rateGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.rateLabel {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.rateLabel.fair {
+  color: var(--brand-agent);
+}
+
+.rateValue {
+  font-size: 14px;
+  font-weight: 600;
+}
+.rateValue.target { color: var(--status-ok); }
+.rateValue.fair { color: var(--text-primary); }
+.rateValue.walkaway { color: var(--status-err); }
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+}
+
+.manualInputGroup {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.manualInput {
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  width: 140px;
+  font-size: 12px;
+}
+
+.manualButton {
+  padding: 8px 16px;
+  background: var(--brand-agent);
+  color: var(--brand-agent-text);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.transcriptPanel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.transcriptHeader {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transcriptHeaderText {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+.transcriptBody {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.transcriptEmpty {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.transcriptEmptyText {
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.messageRight {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 85%;
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.messageLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 85%;
+}
+
+.messageAuthorRight {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  margin-right: 40px;
+}
+
+.messageAuthorLeft {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  margin-left: 40px;
+}
+
+.messageBubbleRowRight {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-direction: row-reverse;
+}
+
+.messageBubbleRowLeft {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.avatarRight {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarLeft {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-agent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+}
+
+.bubbleRight {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  border-radius: 16px 16px 4px 16px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.bubbleLeft {
+  background: var(--brand-agent);
+  padding: 12px 16px;
+  border-radius: 16px 16px 16px 4px;
+  color: var(--brand-agent-text);
+  font-size: 13.5px;
+  line-height: 1.5;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.pendingBubble {
+  padding: 12px 16px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  font-style: italic;
+  background: transparent;
+}
+
+.consoleInputArea {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-panel);
+}
+
+.consoleInputRow {
+  display: flex;
+  gap: 16px;
+}
+
+.quoteInputWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rupeeIcon {
+  position: absolute;
+  left: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.quoteInput {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px 12px 32px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+
+.submitButton {
+  background: var(--brand-agent);
+  color: var(--brand-agent-text);
+  border: none;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

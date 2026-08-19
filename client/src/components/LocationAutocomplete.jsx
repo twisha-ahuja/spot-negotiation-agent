@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { AUTOCOMPLETE_API } from '../api/urls';
 
 // Debounce hook
 function useDebounce(value, delay) {
@@ -41,7 +42,7 @@ export default function LocationAutocomplete({ placeholder, value, onChange, dis
     abortControllerRef.current = controller;
 
     setLoading(true);
-    fetch(`https://prod.lorri.in/api/apiuser/autocomplete?suggest=${encodeURIComponent(debouncedQuery)}&limit=20&searchFields=new_locations&application=home_page`, { signal: controller.signal })
+    fetch(`${AUTOCOMPLETE_API}?suggest=${encodeURIComponent(debouncedQuery)}&limit=20&searchFields=new_locations&application=home_page`, { signal: controller.signal })
       .then(res => res.json())
       .then(data => {
         setOptions(data.value || []);

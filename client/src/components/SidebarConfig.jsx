@@ -1,28 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { validateAdhocId } from '../api';
-import AutoComplete from '../AutocompleteNew';
+import AutoComplete from './Autocomplete';
 import LSP_DATA from './lsp.json';
+import { AUTOCOMPLETE_API } from '../api/urls';
+import styles from '../styles/SidebarConfig.module.css';
 
 export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, loading, hasSession, setSpotDetails }) {
-  const [validating, setValidating] = useState(false);
   const [lsps, setLsps] = useState([]);
 
   useEffect(() => {
-    if (appMode === 'existing') {
-      if (config.adhocId && config.adhocId.length >= 7) {
-        setValidating(true);
-        validateAdhocId(config.adhocId).then((res) => {
-          setLsps(res.lsps);
-          setSpotDetails(res.spotDetails);
-          setValidating(false);
-        });
-      } else {
-        setLsps([]);
-        setSpotDetails(null);
-      }
-    } else {
+    if (hasSession) return;
+
+    if (appMode !== 'existing') {
       // New Simulation logic - populate hypothetical spotDetails dynamically
-      if (config.origin && typeof config.origin === 'object' && config.destination && typeof config.destination === 'object' && config.placementDate) {
+      if (config.origin && config.destination && config.placementDate) {
         let formattedExpiry = "";
         if (config.expiryTimestamp) {
           const dateObj = new Date(config.expiryTimestamp);
@@ -31,12 +21,9 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
           }
         }
         setSpotDetails({
-          originCity: config.origin.location,
-          originState: config.origin.state,
-          destCity: config.destination.location,
-          destState: config.destination.state,
+          origin: config.origin,
+          destination: config.destination,
           truckType: config.truckType,
-          tonnage: parseInt(config.truckType) || 18,
           placementDate: config.placementDate,
           expiryDate: formattedExpiry
         });
@@ -45,16 +32,17 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
       }
     }
   }, [config.adhocId, appMode, config.origin, config.destination, config.truckType]);
+
   return (
-    <div className="pane config-sidebar">
-      <div className="sidebar-group">
-        <div className="group-title">
+    <div className={`${styles.pane} ${styles.configSidebar}`}>
+      <div className={styles.sidebarGroup}>
+        <div className={styles.groupTitle}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>
           Scenario
         </div>
-        {appMode === 'existing' ? (
+        {appMode === 'existing' && !hasSession ? (
           <>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>Adhoc ID</span>
               </label>
@@ -63,54 +51,37 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                 value={config.adhocId}
                 onChange={e => updateConfig("adhocId", e.target.value)}
                 disabled={hasSession}
-                className="monospaced-input"
+                className={styles.monospacedInput}
               />
-              {validating && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>Validating Spot ID in Source System...</div>}
-            </div>
-            <div className="form-group" style={{ marginTop: '16px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>Select LSP</span>
-                {lsps.length > 0 && !validating && <span className="pass-badge pass">Spot Active</span>}
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <select
-                  value={config.transporterName || ''}
-                  onChange={e => updateConfig("transporterName", e.target.value)}
-                  disabled={hasSession || validating || lsps.length === 0}
-                  style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
-                >
-                  <option value="" disabled={true}>{lsps.length > 0 ? "Select shortlisted transporter" : "Awaiting valid Spot..."}</option>
-                  {lsps?.length > 0 && lsps.map(l => <option key={l} value={l}>{l}</option>)}
-                </select>
-                <svg style={{ position: 'absolute', right: '12px', pointerEvents: 'none', color: 'var(--text-tertiary)' }} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
             </div>
           </>
         ) : (
           <>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>Origin</label>
               <AutoComplete
                 placeholder="Search origin city..."
                 value={config.origin}
                 onChange={val => updateConfig("origin", val)}
                 onSelect={val => updateConfig("origin", val)}
-                apiUrl="https://prod.lorri.in/api/apiuser/autocomplete"
+                apiUrl={AUTOCOMPLETE_API}
+                disabled={hasSession}
               />
             </div>
-            <div className="form-group" style={{ marginTop: '16px' }}>
+            <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Destination</label>
               <AutoComplete
                 placeholder="Search destination city..."
                 value={config.destination}
                 onChange={val => updateConfig("destination", val)}
                 onSelect={val => updateConfig("destination", val)}
-                apiUrl="https://prod.lorri.in/api/apiuser/autocomplete"
+                apiUrl={AUTOCOMPLETE_API}
+                disabled={hasSession}
               />
             </div>
-            <div className="form-group" style={{ marginTop: '16px' }}>
+            <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Truck Type</label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <div className={styles.selectWrapper}>
                 <select
                   value={config.truckType?.value || ''}
                   onChange={e => updateConfig("truckType", { label: e.target.value, value: e.target.value })}
@@ -123,10 +94,10 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                   <option value="32 FT SXL Container">32 FT SXL Container</option>
                   <option value="32 FT MXL Container">32 FT MXL Container</option>
                 </select>
-                <svg style={{ position: 'absolute', right: '12px', pointerEvents: 'none', color: 'var(--text-tertiary)' }} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </div>
             </div>
-            <div className="form-group" style={{ marginTop: '16px' }}>
+            <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Select Transporter</label>
               <AutoComplete
                 placeholder="Search transporter..."
@@ -138,9 +109,10 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                   isChecked: true
                 })}
                 localData={LSP_DATA}
+                disabled={hasSession}
               />
             </div>
-            <div className="form-group" style={{ marginTop: '16px' }}>
+            <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Date of Placement</label>
               <input
                 type="date"
@@ -150,7 +122,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                 style={{ width: '100%' }}
               />
             </div>
-            <div className="form-group" style={{ marginTop: '16px' }}>
+            <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Expiry Timestamp</label>
               <input
                 type="datetime-local"
@@ -160,52 +132,81 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                 style={{ width: '100%' }}
               />
             </div>
+            <div className={styles.formGroup} style={{ marginTop: '16px' }}>
+              <label>Select Company</label>
+              <div className={styles.selectWrapper}>
+                <select
+                  value={config.company?.value || ""}
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === 'hectorbeverages.com') {
+                      updateConfig("company", { company_id: "COM000384", domain: "hectorbeverages.com", label: "Hector", value: "hectorbeverages.com" });
+                    } else if (val === 'onida.com') {
+                      updateConfig("company", { company_id: "COM000684", domain: "onida.com", label: "Onida", value: "onida.com" });
+                    } else {
+                      updateConfig("company", null);
+                    }
+                  }}
+                  disabled={hasSession}
+                  style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
+                >
+                  <option value="">-- Select Company --</option>
+                  <option value="hectorbeverages.com">Hector</option>
+                  <option value="onida.com">Onida</option>
+                </select>
+                <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+            </div>
           </>
         )}
       </div>
 
-      {appMode === 'new' && (
-        <div className="sidebar-group">
-          <div className="group-title">
+      {(appMode === 'new' || hasSession) && (
+        <div className={styles.sidebarGroup}>
+          <div className={styles.groupTitle}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
             Agent Config
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>Model</label>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <div className={styles.selectWrapper}>
               <select
                 value={config.model}
                 onChange={e => updateConfig("model", e.target.value)}
                 disabled={hasSession}
                 style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
               >
-                <option value="claude-3-5-sonnet">claude-sonnet-3-5</option>
-                <option value="gemini-1.5-pro">gemini-1-5-pro</option>
+                <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+                <option value="claude-3-5-haiku">claude-3-5-haiku</option>
+                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                <option value="gemini-3.0-pro">gemini-3.0-pro</option>
+                <option value="gemini-3.0-flash">gemini-3.0-flash</option>
               </select>
-              <svg style={{ position: 'absolute', right: '12px', pointerEvents: 'none', color: 'var(--text-tertiary)' }} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>Agent prompt</label>
             <textarea
               rows={8}
               value={config.agentPrompt}
               onChange={e => updateConfig("agentPrompt", e.target.value)}
               disabled={hasSession}
-              className="code-block"
+              className={styles.codeBlock}
               spellCheck="false"
             />
           </div>
         </div>
       )}
 
-      <div className="sidebar-group" style={{ background: 'transparent', border: 'none', padding: 0 }}>
+      <div className={styles.sidebarGroup} style={{ background: 'transparent', border: 'none', padding: 0 }}>
         {!hasSession ? (
-          <button className="btn-primary" onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryTimestamp))}>
+          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryTimestamp))}>
             {loading ? 'Initializing...' : 'Run Scenario'}
           </button>
         ) : (
-          <button className="btn-secondary" onClick={() => window.location.reload()} style={{ width: '100%', marginTop: '16px' }}>
+          <button className={styles.btnSecondary} onClick={() => window.location.reload()} style={{ width: '100%', marginTop: '16px' }}>
             Reset Session
           </button>
         )}
