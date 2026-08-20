@@ -1,18 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "client": {
-      "root": "client/",
-      "framework": "vite"
-    },
-    "server": {
-      "root": "server/",
-      "framework": "fastapi",
-      "entrypoint": "main:app"
-    }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": { "service": "server" } },
-    { "source": "/(.*)", "destination": { "service": "client" } }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite"
 }
