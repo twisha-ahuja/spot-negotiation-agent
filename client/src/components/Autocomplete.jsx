@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react'
 import Location from 'react-autosuggest'
 import debounce from 'lodash/debounce'
-import styles from '../styles/Autocomplete.module.css'
+import '../styles/Autocomplete.css'
 
 const AutoComplete = ({
     onSelect,

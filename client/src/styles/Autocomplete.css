@@ -1,13 +1,13 @@
-:global(.react-autosuggest__container) {
+.react-autosuggest__container {
     position: relative;
     border-radius: 20px;
     width: 100%;
 }
 
-:global(.react-autosuggest__input) {
+.react-autosuggest__input {
     width: 100%;
     padding: 10px 12px;
-    font-family: Helvetica, sans-serif;
+    font-family: var(--font-sans), Helvetica, sans-serif;
     font-weight: 300;
     font-size: 13px;
     border: 1px solid var(--border-color);
@@ -19,31 +19,31 @@
     display: block;
 }
 
-:global(.react-autosuggest__input--focused) {
+.react-autosuggest__input--focused {
     outline: none;
     border-color: var(--text-primary);
 }
 
-:global(.react-autosuggest__input--open) {
+.react-autosuggest__input--open {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-:global(.react-autosuggest__suggestions-container) {
+.react-autosuggest__suggestions-container {
     display: none;
 }
 
-:global(.react-autosuggest__suggestions-container--open) {
+.react-autosuggest__suggestions-container--open {
     display: block;
     position: absolute;
     top: 100%;
     background-color: var(--bg-panel);
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
     color: var(--text-primary);
     font-family: var(--font-sans), Helvetica, sans-serif;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 13px;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
     max-height: 200px;
@@ -54,33 +54,33 @@
     z-index: 9999;
 }
 
-:global(.react-autosuggest__suggestions-list) {
+.react-autosuggest__suggestions-list {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
-:global(.react-autosuggest__suggestion) {
+.react-autosuggest__suggestion {
     cursor: pointer;
     padding: 8px 12px;
     border-bottom: 1px solid var(--border-color);
 }
 
-:global(.react-autosuggest__suggestion:last-child) {
+.react-autosuggest__suggestion:last-child {
     border-bottom: none;
 }
 
-:global(.react-autosuggest__suggestion--highlighted) {
+.react-autosuggest__suggestion--highlighted {
     background-color: var(--bg-surface);
 }
 
-:global(.Loader-Container) {
+.Loader-Container {
     width: 100%;
     display: block;
     position: relative;
 }
 
-:global(.preloader-wrapper) {
+.preloader-wrapper {
     position: absolute;
     right: 1%;
     top: 25%;
@@ -88,11 +88,11 @@
     height: 25px !important;
 }
 
-:global(#Autosuggets_Input_id) {
+#Autosuggets_Input_id {
     width: 100%;
 }
 
-:global(.Spinner-Container) {
+.Spinner-Container {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -100,12 +100,12 @@
 }
 
 @media only screen and (max-width: 600px) {
-    :global(.Loader-Container) {
+    .Loader-Container {
         width: 100%;
         display: block;
     }
 
-    :global(#Autosuggets_Input_id) {
+    #Autosuggets_Input_id {
         width: 100%;
     }
 }
