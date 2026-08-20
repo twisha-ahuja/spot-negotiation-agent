@@ -52,34 +52,55 @@ export async function getPlaygroundSpotDetails(truckEnquiryId) {
 }
 
 /**
- * (Placeholder) Connects to the backend target rate calculation engine.
- * Currently returning `null` to gracefully trigger the manual rate input layout naturally.
+ * Connects to the backend target rate calculation engine asynchronously.
+ * Calculates Fair, Target, and Walkaway rates based autonomously on scenario metadata.
  */
 export async function getCalculatedRates(truckEnquiryId) {
   try {
-    // In actual implementation, this points to your specific rate calculation GET/POST endpoint
-    // Returning nulls right now triggers the graceful manual-input fallback UI as requested
+    const res = await fetch(`${AGENT_API_BASE}/spot/${truckEnquiryId}/calculate_rates`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to calculate rates: ${res.statusText}`);
+    }
+
+    const data = await res.json();
     return {
-      targetRate: null,
-      fairRate: null,
-      walkawayRate: null
+      targetRate: data.target_rate || null,
+      fairRate: data.fair_rate || null,
+      walkawayRate: data.walkaway_rate || null
     };
   } catch (err) {
-    throw err;
+    console.warn("Target calculation incomplete natively:", err);
+    return { targetRate: null, fairRate: null, walkawayRate: null };
   }
 }
 
 /**
- * Calculates Mock Fallback Rates natively.
- * Converts your manual target rate string dynamically into a mock Fair and Walkaway bracket.
+ * Submits a natively forced Target Rate directly establishing baseline constraints asynchronously natively.
  */
 export async function setTargetRate(sessionId, targetRate) {
   try {
-    const t = Number(targetRate);
+    const res = await fetch(`${AGENT_API_BASE}/spot/${sessionId}/set_rate?target_rate=${targetRate}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to set manual target rate: ${res.statusText}`);
+    }
+
+    const data = await res.json();
     return {
-      calculatedTargetRate: t,
-      calculatedFairRate: t + 1800,
-      calculatedWalkawayRate: t + 3300
+      calculatedTargetRate: data.target_rate || null,
+      calculatedFairRate: data.fair_rate || null,
+      calculatedWalkawayRate: data.walkaway_rate || null
     };
   } catch (err) {
     throw err;

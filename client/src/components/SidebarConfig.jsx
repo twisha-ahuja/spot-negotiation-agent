@@ -178,6 +178,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
               >
                 <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
                 <option value="claude-3-5-haiku">claude-3-5-haiku</option>
+                <option value="claude-haiku-4-5">claude-haiku-4-5</option>
                 <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                 <option value="gemini-2.5-flash">gemini-2.5-flash</option>
                 <option value="gemini-3.0-pro">gemini-3.0-pro</option>

@@ -8,6 +8,8 @@
   overflow: hidden;
   height: 100%;
   background: var(--bg-page);
+  flex: 1;
+  min-width: 0;
 }
 
 .loading {

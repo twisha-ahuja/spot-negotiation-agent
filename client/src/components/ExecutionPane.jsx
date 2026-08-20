@@ -3,7 +3,7 @@ import AgentTraceView from './AgentTraceView';
 import styles from '../styles/ExecutionPane.module.css';
 
 export default function ExecutionPane({
-  sessionId, computedTarget, computedFair, computedWalkaway, setComputedTarget, setComputedWalkaway,
+  sessionId, computedTarget, computedFair, computedWalkaway, computingRates, setComputedTarget, setComputedWalkaway,
   onSetTargetRate, transcript, loading, handleBid, activeTab, spotDetails, pendingQuote
 }) {
   const [quoteInput, setQuoteInput] = useState('');
@@ -121,7 +121,11 @@ export default function ExecutionPane({
         </div>
 
         <div>
-          {computedTarget ? (
+          {computingRates ? (
+            <div className={styles.ratesBox} style={{ justifyContent: 'center', height: '42px', alignItems: 'center' }}>
+               <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>⚙️ Rates are being calculated...</span>
+            </div>
+          ) : computedTarget ? (
             <div className={styles.ratesBox}>
               <div className={styles.rateGroup}>
                 <span className={styles.rateLabel}>Target Rate</span>
@@ -148,12 +152,13 @@ export default function ExecutionPane({
                   onChange={e => setTempTarget(e.target.value)}
                   className={styles.manualInput}
                   placeholder="Target Rate (₹)"
+                  min="1"
                 />
                 <button
                   onClick={() => onSetTargetRate(tempTarget)}
-                  disabled={!tempTarget || loading}
+                  disabled={!tempTarget || Number(tempTarget) <= 0 || loading}
                   className={styles.manualButton}
-                  style={{ cursor: (!tempTarget || loading) ? 'not-allowed' : 'pointer', opacity: (!tempTarget || loading) ? 0.5 : 1 }}>
+                  style={{ cursor: (!tempTarget || Number(tempTarget) <= 0 || loading) ? 'not-allowed' : 'pointer', opacity: (!tempTarget || Number(tempTarget) <= 0 || loading) ? 0.5 : 1 }}>
                   {loading ? 'Setting...' : 'Set Rate'}
                 </button>
               </div>

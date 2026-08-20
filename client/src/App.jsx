@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import styles from "./styles/App.module.css";
-import { createPlaygroundSpot, getPlaygroundSpotDetails, setTargetRate } from "./api/spotApi";
+import { createPlaygroundSpot, getPlaygroundSpotDetails, setTargetRate, getCalculatedRates } from "./api/spotApi";
 import { submitTransporterQuote } from "./api/quoteApi";
 import sampleTrace from "./trace.json";
 import { Toaster, toast } from 'react-hot-toast';
@@ -44,6 +44,7 @@ export default function App() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [computingRates, setComputingRates] = useState(false);
   const [polling, setPolling] = useState(false);
   const [sessionId, setSessionId] = useState(initialParams.sId);
   const [computedTarget, setComputedTarget] = useState(null);
@@ -280,6 +281,21 @@ export default function App() {
       setSessionId(res.truck_enquiry_id);
       window.history.pushState({}, '', `/${appMode}/${res.truck_enquiry_id}`);
 
+      // Instantly evaluate spot complexity target heuristics post-initialization
+      try {
+        setComputingRates(true);
+        const rates = await getCalculatedRates(res.truck_enquiry_id);
+        if (rates?.targetRate) {
+          setComputedTarget(rates.targetRate);
+          setComputedFair(rates.fairRate);
+          setComputedWalkaway(rates.walkawayRate);
+        }
+      } catch (err) {
+        console.warn("Rates computation incomplete block securely handled.", err);
+      } finally {
+        setComputingRates(false);
+      }
+
       // The effect above will now fetch the exact initialized spotDetails and Rates!
       // But we will gracefully kickstart session status.
 
@@ -325,7 +341,18 @@ export default function App() {
         latency: '-',
         tokens: '-',
         cost: '-',
-        langfuseTrace: null
+        langfuseTrace: {
+          id: 'pending...',
+          name: "Agent processing...",
+          timestamp: new Date().toISOString(),
+          latency: 0,
+          totalCost: 0,
+          sessionId: sessionId,
+          environment: "production",
+          input: { status: "Awaiting agent...", rate: quoteInput },
+          output: { status: "Computing heuristics..." },
+          observations: sampleTrace.observations
+        }
       }]);
 
       setPendingQuote(null);
@@ -376,10 +403,6 @@ export default function App() {
           <button className={styles.themeToggle} onClick={toggleTheme}>
             {theme === 'dark' ? '☀ Light' : '☾ Dark'}
           </button>
-          <button className={styles.btnAction}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
-            Save config
-          </button>
         </div>
       </header>
 
@@ -398,6 +421,7 @@ export default function App() {
           computedTarget={computedTarget}
           computedFair={computedFair}
           computedWalkaway={computedWalkaway}
+          computingRates={computingRates}
           onSetTargetRate={handleSetManualTargetRate}
           transcript={transcript}
           loading={loading}
