@@ -26,6 +26,30 @@ export async function createPlaygroundSpot(payload, companyId, domain) {
 }
 
 /**
+ * Fetches the global list of previously initialized AI spot simulations directly handling history.
+ */
+export async function getSimulations() {
+  try {
+    const res = await fetch(`${AGENT_API_BASE}/spot/list`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch simulations: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data.simulations || [];
+  } catch (err) {
+    console.error("Simulation list fetch failed:", err);
+    return [];
+  }
+}
+
+/**
  * Fetches the exact details and configuration history of a given Spot Enquiry.
  * Passing the Enquiry ID safely recovers all original nested configurations like Location, Model, and Rates natively.
  */

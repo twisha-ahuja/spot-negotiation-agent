@@ -373,9 +373,16 @@ export default function App() {
             {theme === 'dark' ? '☀ Light' : '☾ Dark'}
           </button>
         </div>
-        <LandingPage onSelectMode={mode => {
-          window.history.pushState({}, '', `/${mode}`);
-          setAppMode(mode);
+        <LandingPage onSelectMode={modeString => {
+          if (modeString.includes('/')) {
+            const [mode, sId] = modeString.split('/');
+            window.history.pushState({}, '', `/${mode}/${sId}`);
+            setAppMode(mode);
+            if (sId) setSessionId(sId);
+          } else {
+            window.history.pushState({}, '', `/${modeString}`);
+            setAppMode(modeString);
+          }
         }} />
       </div>
     );
