@@ -136,6 +136,9 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                   style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
                 >
                   <option value="18 MT MXL Container">18 MT MXL Container</option>
+                  <option value="12 WHEELER OPEN BODY TRUCK (20/21 MT)">12 WHEELER OPEN BODY TRUCK (20/21 MT)</option>
+                  <option value="Open Truck 9 MT">Open Truck 9 MT</option>
+                  <option value="32 FT MULTI AXLE CONTAINER (15 MT)">32 FT MULTI AXLE CONTAINER (15 MT)</option>
                   <option value="20 MT MXL Container">20 MT MXL Container</option>
                   <option value="24 MT MXL Container">24 MT MXL Container</option>
                   <option value="32 FT SXL Container">32 FT SXL Container</option>
