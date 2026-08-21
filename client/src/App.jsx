@@ -7,6 +7,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import SidebarConfig from "./components/SidebarConfig";
 import ExecutionPane from "./components/ExecutionPane";
 import LandingPage from "./components/LandingPage";
+import { getSessionTraces } from "./api/langfuseApi";
 
 const EMPTY_CONFIG = {
   transporterName: "",
@@ -75,7 +76,11 @@ export default function App() {
 
     const fetchSpotDetails = async () => {
       try {
-        const res = await getPlaygroundSpotDetails(sessionId);
+        const [res, traces] = await Promise.all([
+          getPlaygroundSpotDetails(sessionId),
+          getSessionTraces(sessionId).catch(() => [])
+        ]);
+        const sortedTraces = [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
         const docs = Array.isArray(res) ? res : (res?.docs || []);
         if (docs.length > 0) {
 
@@ -109,20 +114,23 @@ export default function App() {
           const tId = fetchedTransporterList?.[0]?.transporter_id;
           const transDoc = docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === tId);
           if (transDoc) {
-            setTranscript(transDoc.agent_logs.map(log => ({
-              round: log.round,
-              traceId: transDoc._id?.$oid || "trace_" + log.round,
-              transporterName: fetchedTransporterList?.[0]?.transporter_name || 'Transporter',
-              transporterQuote: log.transporter_rate,
-              agentCounter: log.counter_offer_rate,
-              negotiate: log.negotiate,
-              status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
-              latency: log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-',
-              tokens: log.usage?.output_tokens || '-',
-              cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
-              timestamp: log.timestamp?.$date || log.timestamp || new Date().toISOString(),
-              reasoning: log.reasoning || ""
-            })));
+            setTranscript(transDoc.agent_logs.map(log => {
+              const lfTrace = sortedTraces[log.round - 1];
+              return {
+                round: log.round,
+                traceId: transDoc._id?.$oid || "trace_" + log.round,
+                transporterName: fetchedTransporterList?.[0]?.transporter_name || 'Transporter',
+                transporterQuote: log.transporter_rate,
+                agentCounter: log.counter_offer_rate,
+                negotiate: log.negotiate,
+                status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
+                latency: lfTrace?.latency ? `${lfTrace.latency.toFixed(1)}s` : (log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-'),
+                tokens: log.usage?.output_tokens || '-',
+                cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
+                timestamp: log.timestamp?.$date || log.timestamp || new Date().toISOString(),
+                reasoning: log.reasoning || ""
+              };
+            }));
 
             if (transDoc.pending_round) {
               setPendingQuote(transDoc.pending_round.transporter_rate);
@@ -145,276 +153,282 @@ export default function App() {
       }
     };
 
-  fetchSpotDetails();
-}, [sessionId]);
+    fetchSpotDetails();
+  }, [sessionId]);
 
-// Polling Hook for Async Agent Execution
-useEffect(() => {
-  if (!polling || !sessionId) return;
-  const transporterId = config.selectedTransporter?.transporter_id;
+  // Polling Hook for Async Agent Execution
+  useEffect(() => {
+    if (!polling || !sessionId) return;
+    const transporterId = config.selectedTransporter?.transporter_id;
 
-  let pollCount = 0;
-  const interval = setInterval(async () => {
-    try {
-      pollCount++;
-      const res = await getPlaygroundSpotDetails(sessionId);
-      console.log(res, "res")
-      const docs = Array.isArray(res) ? res : (res?.docs || []);
-      const transDoc = docs.length > 0 && docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
+    let pollCount = 0;
+    const interval = setInterval(async () => {
+      try {
+        pollCount++;
+        const [res, traces] = await Promise.all([
+          getPlaygroundSpotDetails(sessionId),
+          getSessionTraces(sessionId).catch(() => [])
+        ]);
+        const sortedTraces = [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        const docs = Array.isArray(res) ? res : (res?.docs || []);
+        const transDoc = docs.length > 0 && docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
 
-      // If pending_round is null/undefined, the backend agent has successfully concluded the cycle and committed logs natively.
-      if (transDoc && !transDoc.pending_round && transDoc.agent_logs) {
-        const logs = transDoc.agent_logs;
-        setTranscript(logs.map(log => ({
-          round: log.round,
-          traceId: transDoc._id?.$oid || "trace_" + log.round,
-          transporterName: config.transporterName || 'Transporter',
-          transporterQuote: log.transporter_rate,
-          agentCounter: log.counter_offer_rate,
-          negotiate: log.negotiate,
-          status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
-          latency: log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-',
-          tokens: log.usage?.output_tokens || '-',
-          cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
-          timestamp: log.timestamp?.$date || log.timestamp || new Date().toISOString(),
-          reasoning: log.reasoning || ""
-        })));
+        // If pending_round is null/undefined, the backend agent has successfully concluded the cycle and committed logs natively.
+        if (transDoc && !transDoc.pending_round && transDoc.agent_logs) {
+          const logs = transDoc.agent_logs;
+          setTranscript(logs.map(log => {
+            const lfTrace = sortedTraces[log.round - 1];
+            return {
+              round: log.round,
+              traceId: transDoc._id?.$oid || "trace_" + log.round,
+              transporterName: config.transporterName || 'Transporter',
+              transporterQuote: log.transporter_rate,
+              agentCounter: log.counter_offer_rate,
+              negotiate: log.negotiate,
+              status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
+              latency: lfTrace?.latency ? `${lfTrace.latency.toFixed(1)}s` : (log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-'),
+              tokens: log.usage?.output_tokens || '-',
+              cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
+              timestamp: log.timestamp?.$date || log.timestamp || new Date().toISOString(),
+              reasoning: log.reasoning || ""
+            };
+          }));
 
-        setPolling(false);
-        setLoading(false);
-        setPendingQuote(null);
-      } else if (!transDoc || !transDoc.pending_round) {
-        // If quoting genuinely hasn't started or dropped off natively without generating logs, shut down polling.
-        setPolling(false);
-        setLoading(false);
-        setPendingQuote(null);
-      } else if (pollCount > 15) {
-        // Timeout after ~150 seconds based on 10s poll
-        setPolling(false);
-        setLoading(false);
-        setPendingQuote(null);
-        toast.error("Agent is taking too long to respond. Polling timed out.");
+          setPolling(false);
+          setLoading(false);
+          setPendingQuote(null);
+        } else if (!transDoc || !transDoc.pending_round) {
+          // If quoting genuinely hasn't started or dropped off natively without generating logs, shut down polling.
+          setPolling(false);
+          setLoading(false);
+          setPendingQuote(null);
+        } else if (pollCount > 15) {
+          // Timeout after ~150 seconds based on 10s poll
+          setPolling(false);
+          setLoading(false);
+          setPendingQuote(null);
+          toast.error("Agent is taking too long to respond. Polling timed out.");
+        }
+      } catch (err) {
+        console.error("Polling fetch failed", err);
       }
-    } catch (err) {
-      console.error("Polling fetch failed", err);
+    }, 40000);
+
+    return () => clearInterval(interval);
+  }, [polling, sessionId, transcript.length, config.selectedTransporter, config.transporterName]);
+
+  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+
+  const updateConfig = (field, val) => setConfig(prev => ({ ...prev, [field]: val }));
+
+  const handleStartSession = async () => {
+    if (appMode === 'existing' && !config.adhocId) return;
+    if (appMode === 'new' && (!config.origin || !config.destination)) return;
+
+    if (appMode === 'existing') {
+      setSessionId(config.adhocId);
+      window.history.pushState({}, '', `/existing/${config.adhocId}`);
+      setTranscript([]);
+      return;
     }
-  }, 40000);
 
-  return () => clearInterval(interval);
-}, [polling, sessionId, transcript.length, config.selectedTransporter, config.transporterName]);
+    let payload = {
+      agent_enabled: true,
+      max_rounds_per_transporter: 10,
+      model: config.model,
+      sections: config.promptSections?.length > 0 ? (config.promptSections || []).filter(s => s.editable).map(s => ({
+        heading: s.heading,
+        content: s.content
+      })) : null,
+      lane_details: {
+        origin: config.origin || {},
+        destination: config.destination || {},
+        truck_type: config.truckType || { label: "", value: "" },
+        benchmark_transporter_list: config.selectedTransporter ? [{
+          transporter_id: config.selectedTransporter.transporter_id || "",
+          transporter_name: config.selectedTransporter.transporter_name || ""
+        }] : [],
+        dop: config.placementDate,
+        expiry_hours: parseInt(config.expiryHours) || 12
+      }
+    };
 
-const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+    setLoading(true);
+    try {
+      const companyId = config.company?.company_id || "";
+      const domain = config.company?.domain || "";
+      console.log(payload, companyId, domain, "HELLO");
+      const res = await createPlaygroundSpot(payload, companyId, domain);
 
-const updateConfig = (field, val) => setConfig(prev => ({ ...prev, [field]: val }));
+      toast.success("Spot created successfully!");
 
-const handleStartSession = async () => {
-  if (appMode === 'existing' && !config.adhocId) return;
-  if (appMode === 'new' && (!config.origin || !config.destination)) return;
+      if (appMode === 'new') {
+        const truckLabel = typeof config.truckType === 'object' ? config.truckType.label : config.truckType;
+        setSpotDetails({
+          origin: config?.origin,
+          destination: config?.destination,
+          truckType: truckLabel,
+          dateOfPlacement: config?.placementDate,
+        });
+      }
 
-  if (appMode === 'existing') {
-    setSessionId(config.adhocId);
-    window.history.pushState({}, '', `/existing/${config.adhocId}`);
-    setTranscript([]);
-    return;
-  }
+      setSessionId(res.truck_enquiry_id);
+      window.history.pushState({}, '', `/${appMode}/${res.truck_enquiry_id}`);
 
-  let payload = {
-    agent_enabled: true,
-    max_rounds_per_transporter: 10,
-    model: config.model,
-    sections: config.promptSections?.length > 0 ? (config.promptSections || []).filter(s => s.editable).map(s => ({
-      heading: s.heading,
-      content: s.content
-    })) : null,
-    lane_details: {
-      origin: config.origin || {},
-      destination: config.destination || {},
-      truck_type: config.truckType || { label: "", value: "" },
-      benchmark_transporter_list: config.selectedTransporter ? [{
-        transporter_id: config.selectedTransporter.transporter_id || "",
-        transporter_name: config.selectedTransporter.transporter_name || ""
-      }] : [],
-      dop: config.placementDate,
-      expiry_hours: parseInt(config.expiryHours) || 12
+      // Instantly evaluate spot complexity target heuristics post-initialization
+      try {
+        setComputingRates(true);
+        const rates = await getCalculatedRates(res.truck_enquiry_id);
+        if (rates?.targetRate) {
+          setComputedTarget(rates.targetRate);
+          setComputedFair(rates.fairRate);
+          setComputedWalkaway(rates.walkawayRate);
+        }
+      } catch (err) {
+        console.warn("Rates computation incomplete block securely handled.", err);
+      } finally {
+        setComputingRates(false);
+      }
+
+      // The effect above will now fetch the exact initialized spotDetails and Rates!
+      // But we will gracefully kickstart session status.
+
+      setTranscript([]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
-  setLoading(true);
-  try {
-    const companyId = config.company?.company_id || "";
-    const domain = config.company?.domain || "";
-    console.log(payload, companyId, domain, "HELLO");
-    const res = await createPlaygroundSpot(payload, companyId, domain);
-
-    toast.success("Spot created successfully!");
-
-    if (appMode === 'new') {
-      const truckLabel = typeof config.truckType === 'object' ? config.truckType.label : config.truckType;
-      setSpotDetails({
-        origin: config?.origin,
-        destination: config?.destination,
-        truckType: truckLabel,
-        dateOfPlacement: config?.placementDate,
-      });
-    }
-
-    setSessionId(res.truck_enquiry_id);
-    window.history.pushState({}, '', `/${appMode}/${res.truck_enquiry_id}`);
-
-    // Instantly evaluate spot complexity target heuristics post-initialization
+  const handleSetManualTargetRate = async (manualRate) => {
+    setLoading(true);
     try {
-      setComputingRates(true);
-      const rates = await getCalculatedRates(res.truck_enquiry_id);
-      if (rates?.targetRate) {
-        setComputedTarget(rates.targetRate);
-        setComputedFair(rates.fairRate);
-        setComputedWalkaway(rates.walkawayRate);
-      }
-    } catch (err) {
-      console.warn("Rates computation incomplete block securely handled.", err);
+      const res = await setTargetRate(sessionId, manualRate);
+      setComputedTarget(res.calculatedTargetRate);
+      setComputedFair(res.calculatedFairRate);
+      setComputedWalkaway(res.calculatedWalkawayRate);
+    } catch (e) {
+      console.error(e);
     } finally {
-      setComputingRates(false);
+      setLoading(false);
     }
+  };
 
-    // The effect above will now fetch the exact initialized spotDetails and Rates!
-    // But we will gracefully kickstart session status.
+  const handleBid = async (quoteInput) => {
+    if (!sessionId) return;
+    setLoading(true);
+    try {
+      // Post actual pipeline request through the newly created async API cleanly
+      const transporterId = config.selectedTransporter?.transporter_id || "UNKNOWN_ID";
+      await submitTransporterQuote(sessionId, transporterId, quoteInput);
 
+      // Immediately fetch once to pick up the pending_round document created by the backend
+      const res = await getPlaygroundSpotDetails(sessionId);
+      const docs = Array.isArray(res) ? res : (res?.docs || []);
+      const transDoc = docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
+
+      if (transDoc && transDoc.pending_round) {
+        setPendingQuote(transDoc.pending_round.transporter_rate);
+      }
+
+      setPolling(true); // Engages the asynchronous listener hook mapped above
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
+      setPendingQuote(null);
+    }
+  };
+
+  const handleResetSession = () => {
+    window.history.pushState({}, '', '/new');
+    setAppMode('new');
+    setSessionId(null);
+    setConfig(EMPTY_CONFIG);
     setTranscript([]);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    setLoading(false);
-  }
-};
-
-const handleSetManualTargetRate = async (manualRate) => {
-  setLoading(true);
-  try {
-    const res = await setTargetRate(sessionId, manualRate);
-    setComputedTarget(res.calculatedTargetRate);
-    setComputedFair(res.calculatedFairRate);
-    setComputedWalkaway(res.calculatedWalkawayRate);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    setLoading(false);
-  }
-};
-
-const handleBid = async (quoteInput) => {
-  if (!sessionId) return;
-  setLoading(true);
-  try {
-    // Post actual pipeline request through the newly created async API cleanly
-    const transporterId = config.selectedTransporter?.transporter_id || "UNKNOWN_ID";
-    await submitTransporterQuote(sessionId, transporterId, quoteInput);
-
-    // Immediately fetch once to pick up the pending_round document created by the backend
-    const res = await getPlaygroundSpotDetails(sessionId);
-    const docs = Array.isArray(res) ? res : (res?.docs || []);
-    const transDoc = docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
-
-    if (transDoc && transDoc.pending_round) {
-      setPendingQuote(transDoc.pending_round.transporter_rate);
-    }
-
-    setPolling(true); // Engages the asynchronous listener hook mapped above
-  } catch (e) {
-    console.error(e);
-    setLoading(false);
+    setSpotDetails(null);
+    setComputedTarget(null);
+    setComputedFair(null);
+    setComputedWalkaway(null);
     setPendingQuote(null);
+  };
+
+  if (appMode === 'landing') {
+    return (
+      <div className={styles.appContainer}>
+        <Toaster position="top-center" />
+        <div className={styles.landingThemeControls}>
+          <button className={styles.btnAction} onClick={toggleTheme}>
+            {theme === 'dark' ? '☀ Light' : '☾ Dark'}
+          </button>
+        </div>
+        <LandingPage onSelectMode={modeString => {
+          if (modeString.includes('/')) {
+            const [mode, sId] = modeString.split('/');
+            window.history.pushState({}, '', `/${mode}/${sId}`);
+            setAppMode(mode);
+            if (sId) setSessionId(sId);
+          } else {
+            window.history.pushState({}, '', `/${modeString}`);
+            setAppMode(modeString);
+          }
+        }} />
+      </div>
+    );
   }
-};
 
-const handleResetSession = () => {
-  window.history.pushState({}, '', '/new');
-  setAppMode('new');
-  setSessionId(null);
-  setConfig(EMPTY_CONFIG);
-  setTranscript([]);
-  setSpotDetails(null);
-  setComputedTarget(null);
-  setComputedFair(null);
-  setComputedWalkaway(null);
-  setPendingQuote(null);
-};
-
-if (appMode === 'landing') {
   return (
     <div className={styles.appContainer}>
       <Toaster position="top-center" />
-      <div className={styles.landingThemeControls}>
-        <button className={styles.btnAction} onClick={toggleTheme}>
-          {theme === 'dark' ? '☀ Light' : '☾ Dark'}
-        </button>
+      <header className={styles.topNav}>
+        <div className={styles.navLeft}>
+          <div className={styles.navBrand}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z" /><path d="M12 6a6 6 0 1 0 0 12 6 6 0 1 0 0-12z" /><path d="M12 10a2 2 0 1 0 0 4 2 2 0 1 0 0-4z" /></svg>
+            <h2>Spot Negotiation Playground</h2>
+          </div>
+          <div className={styles.navTabs}>
+            <div className={`${styles.navTab} ${activeTab === 'Live Console' ? styles.navTabActive : ''}`} onClick={() => setActiveTab('Live Console')}>Live Console</div>
+            <div className={`${styles.navTab} ${activeTab === 'Observability' ? styles.navTabActive : ''}`} onClick={() => setActiveTab('Observability')}>Observability</div>
+          </div>
+        </div>
+
+        <div className={styles.navActions}>
+          <button className={styles.btnAction} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); }}>
+            Exit to Home
+          </button>
+          <button className={styles.themeToggle} onClick={toggleTheme}>
+            {theme === 'dark' ? '☀ Light' : '☾ Dark'}
+          </button>
+        </div>
+      </header>
+
+      <div className={styles.workspace}>
+        <SidebarConfig
+          appMode={appMode}
+          config={config}
+          updateConfig={updateConfig}
+          handleStartSession={handleStartSession}
+          handleResetSession={handleResetSession}
+          loading={loading}
+          hasSession={!!sessionId}
+          sessionId={sessionId}
+          setSpotDetails={setSpotDetails}
+        />
+        <ExecutionPane
+          sessionId={sessionId}
+          computedTarget={computedTarget}
+          computedFair={computedFair}
+          computedWalkaway={computedWalkaway}
+          computingRates={computingRates}
+          onSetTargetRate={handleSetManualTargetRate}
+          transcript={transcript}
+          loading={loading}
+          handleBid={handleBid}
+          activeTab={activeTab}
+          spotDetails={spotDetails}
+          pendingQuote={pendingQuote}
+        />
       </div>
-      <LandingPage onSelectMode={modeString => {
-        if (modeString.includes('/')) {
-          const [mode, sId] = modeString.split('/');
-          window.history.pushState({}, '', `/${mode}/${sId}`);
-          setAppMode(mode);
-          if (sId) setSessionId(sId);
-        } else {
-          window.history.pushState({}, '', `/${modeString}`);
-          setAppMode(modeString);
-        }
-      }} />
     </div>
   );
-}
-
-return (
-  <div className={styles.appContainer}>
-    <Toaster position="top-center" />
-    <header className={styles.topNav}>
-      <div className={styles.navLeft}>
-        <div className={styles.navBrand}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z" /><path d="M12 6a6 6 0 1 0 0 12 6 6 0 1 0 0-12z" /><path d="M12 10a2 2 0 1 0 0 4 2 2 0 1 0 0-4z" /></svg>
-          <h2>Spot Negotiation Playground</h2>
-        </div>
-        <div className={styles.navTabs}>
-          <div className={`${styles.navTab} ${activeTab === 'Live Console' ? styles.navTabActive : ''}`} onClick={() => setActiveTab('Live Console')}>Live Console</div>
-          <div className={`${styles.navTab} ${activeTab === 'Observability' ? styles.navTabActive : ''}`} onClick={() => setActiveTab('Observability')}>Observability</div>
-        </div>
-      </div>
-
-      <div className={styles.navActions}>
-        <button className={styles.btnAction} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); }}>
-          Exit to Home
-        </button>
-        <button className={styles.themeToggle} onClick={toggleTheme}>
-          {theme === 'dark' ? '☀ Light' : '☾ Dark'}
-        </button>
-      </div>
-    </header>
-
-    <div className={styles.workspace}>
-      <SidebarConfig
-        appMode={appMode}
-        config={config}
-        updateConfig={updateConfig}
-        handleStartSession={handleStartSession}
-        handleResetSession={handleResetSession}
-        loading={loading}
-        hasSession={!!sessionId}
-        sessionId={sessionId}
-        setSpotDetails={setSpotDetails}
-      />
-      <ExecutionPane
-        sessionId={sessionId}
-        computedTarget={computedTarget}
-        computedFair={computedFair}
-        computedWalkaway={computedWalkaway}
-        computingRates={computingRates}
-        onSetTargetRate={handleSetManualTargetRate}
-        transcript={transcript}
-        loading={loading}
-        handleBid={handleBid}
-        activeTab={activeTab}
-        spotDetails={spotDetails}
-        pendingQuote={pendingQuote}
-      />
-    </div>
-  </div>
-);
 }

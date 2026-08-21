@@ -34,8 +34,11 @@ export default function AgentTraceView({ activeTrace, loading: parentLoading, se
       try {
         const traces = await getSessionTraces(sessionId);
         if (traces && traces.length > 0) {
-          // Attempt to match the exact active round dynamically, else default to the latest trace
-          const matchedTrace = traces.find(t => t.name && t.name.includes(`Round ${activeTrace.round}`)) || traces[0];
+          // Sort traces chronologically to natively map traces linearly to execution rounds, bypassing brittle name string mapping
+          const sortedTraces = [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+          const targetIndex = (activeTrace.round || 1) - 1;
+          const matchedTrace = sortedTraces[targetIndex] || sortedTraces[sortedTraces.length - 1];
+
           const fullTrace = await getTraceData(matchedTrace.id);
           setLangfuseTrace(fullTrace);
         } else {
@@ -54,7 +57,7 @@ export default function AgentTraceView({ activeTrace, loading: parentLoading, se
 
     const interval = setInterval(fetchTrace, 40000);
     return () => clearInterval(interval);
-  }, [sessionId, activeTrace]);
+  }, [sessionId, activeTrace?.round]);
 
   if (parentLoading || loadingTrace) {
     return <div className={`${styles.container} ${styles.loading}`}>Loading Langfuse Trace...</div>;
