@@ -20,7 +20,7 @@ const EMPTY_CONFIG = {
   placementDate: "",
   expiryHours: 24,
   company: null,
-  model: "claude-3-5-sonnet",
+  model: "",
   agentPrompt: "You are a spot-rate negotiation agent for a freight brokerage. Negotiate firmly but fairly toward the target rate, never below the walkaway rate."
 };
 

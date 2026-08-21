@@ -29,6 +29,9 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
         const models = await getAllowedModels();
         if (models && models.length > 0) {
           setAllowedModels(models);
+          if (!models.includes(config.model)) {
+            updateConfig("model", models[0]);
+          }
         }
       } catch (err) {
         console.error("Failed to load allowed models", err);
@@ -225,10 +228,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                 {allowedModels.length > 0 ? (
                   allowedModels.map(m => <option key={m} value={m}>{m}</option>)
                 ) : (
-                  <>
-                    <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-                    <option value="claude-haiku-4-5">claude-haiku-4-5</option>
-                  </>
+                  <option value="" disabled>Loading models...</option>
                 )}
               </select>
               <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
