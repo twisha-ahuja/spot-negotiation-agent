@@ -105,6 +105,7 @@
   background: var(--bg-surface);
   border-left: 3px solid #3b82f6;
 }
+
 .roundCard.inactive {
   background: transparent;
   border-left: 3px solid transparent;
@@ -120,9 +121,11 @@
   font-size: 13px;
   font-weight: 600;
 }
+
 .roundCardTitle.active {
   color: var(--text-primary);
 }
+
 .roundCardTitle.inactive {
   color: var(--text-secondary);
 }
@@ -222,6 +225,7 @@
   letter-spacing: 0.5px;
   font-weight: 600;
 }
+
 .rateLabel.fair {
   color: var(--brand-agent);
 }
@@ -230,9 +234,18 @@
   font-size: 14px;
   font-weight: 600;
 }
-.rateValue.target { color: var(--status-ok); }
-.rateValue.fair { color: var(--text-primary); }
-.rateValue.walkaway { color: var(--status-err); }
+
+.rateValue.target {
+  color: var(--status-ok);
+}
+
+.rateValue.fair {
+  color: var(--text-primary);
+}
+
+.rateValue.walkaway {
+  color: var(--status-err);
+}
 
 .divider {
   width: 1px;
@@ -399,7 +412,7 @@
   font-size: 13.5px;
   line-height: 1.5;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .pendingBubble {
@@ -448,12 +461,24 @@
 
 .submitButton {
   background: var(--brand-agent);
-  color: var(--brand-agent-text);
+  color: var(--bg-surface);
   border: none;
-  padding: 0 24px;
+  padding: 12px 20px;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 14px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #0284c7;
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(1px);
 }

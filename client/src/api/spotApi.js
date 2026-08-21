@@ -164,3 +164,54 @@ export async function submitBid(sessionId, transporterName, quote) {
     throw err;
   }
 }
+
+/**
+ * Fetches the master instruction manual for the AI agent, broken down into editable sections.
+ * If you pass a truck_enquiry_id, it returns any previous custom edits made for that specific spot.
+ */
+export async function getPromptTemplate(truckEnquiryId = null) {
+  try {
+    const url = new URL(`${AGENT_API_BASE}/spot/prompt_template`);
+    if (truckEnquiryId) {
+      url.searchParams.append('truck_enquiry_id', truckEnquiryId);
+    }
+
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch prompt template: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
+/**
+ * Retrieves the exact list of agent LLM models allowed by the system configuration synchronously.
+ */
+export async function getAllowedModels() {
+  try {
+    const res = await fetch(`${AGENT_API_BASE}/spot/allowed_models`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch allowed models: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("Failed fetching allowed models:", err);
+    return [];
+  }
+}

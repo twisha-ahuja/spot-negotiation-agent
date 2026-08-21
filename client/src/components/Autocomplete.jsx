@@ -25,17 +25,16 @@ const AutoComplete = ({
     const getLabel = (opt) => opt[labelKey] || opt.transporter_name || opt.name || ''
 
     const onSuggestionsFetchRequested = useCallback(debounce(({ value: inputValue }) => {
+        if (localData) {
+            setShow(true)
+            const term = inputValue.toLowerCase()
+            const filtered = localData.filter(d => getLabel(d).toLowerCase().includes(term));
+            setSuggestions(filtered)
+            setShow(false)
+            return;
+        }
+
         if (inputValue.length >= 2) {
-
-            if (localData) {
-                setShow(true)
-                const term = inputValue.toLowerCase()
-                const filtered = localData.filter(d => getLabel(d).toLowerCase().includes(term)).slice(0, 20);
-                setSuggestions(filtered)
-                setShow(false)
-                return;
-            }
-
             if (abortControllerRef.current) abortControllerRef.current.abort()
             const controller = new AbortController()
             abortControllerRef.current = controller
@@ -96,6 +95,7 @@ const AutoComplete = ({
                 onSuggestionsClearRequested={onSuggestionsClearRequested}
                 getSuggestionValue={getLabel}
                 renderSuggestion={getLabel}
+                shouldRenderSuggestions={(v) => localData ? true : v.trim().length >= 2}
                 onSuggestionSelected={onSuggestionSelected}
                 inputProps={inputProps}
             />

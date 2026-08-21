@@ -18,7 +18,7 @@ const EMPTY_CONFIG = {
     value: "18 MT MXL Container"
   },
   placementDate: "",
-  expiryTimestamp: "",
+  expiryHours: 24,
   company: null,
   model: "claude-3-5-sonnet",
   agentPrompt: "You are a spot-rate negotiation agent for a freight brokerage. Negotiate firmly but fairly toward the target rate, never below the walkaway rate."
@@ -240,10 +240,11 @@ export default function App() {
     let payload = {
       agent_enabled: true,
       max_rounds_per_transporter: 10,
-      playground_settings: {
-        model: config.model,
-        agent_prompt: config.agentPrompt
-      },
+      model: config.model,
+      sections: config.promptSections?.length > 0 ? (config.promptSections || []).filter(s => s.editable).map(s => ({
+        heading: s.heading,
+        content: s.content
+      })) : null,
       lane_details: {
         origin: config.origin || {},
         destination: config.destination || {},
@@ -253,9 +254,7 @@ export default function App() {
           transporter_name: config.selectedTransporter.transporter_name || ""
         }] : [],
         dop: config.placementDate,
-        expiry_date: config.expiryTimestamp
-          ? new Date(config.expiryTimestamp).toISOString().replace('Z', '+00:00')
-          : ""
+        expiry_hours: parseInt(config.expiryHours) || 12
       }
     };
 
@@ -421,6 +420,7 @@ export default function App() {
           handleStartSession={handleStartSession}
           loading={loading}
           hasSession={!!sessionId}
+          sessionId={sessionId}
           setSpotDetails={setSpotDetails}
         />
         <ExecutionPane

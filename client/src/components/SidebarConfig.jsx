@@ -2,10 +2,54 @@ import React, { useState, useEffect } from 'react';
 import AutoComplete from './Autocomplete';
 import LSP_DATA from './lsp.json';
 import { AUTOCOMPLETE_API } from '../api/urls';
+import { getPromptTemplate, getAllowedModels } from '../api/spotApi';
 import styles from '../styles/SidebarConfig.module.css';
 
-export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, loading, hasSession, setSpotDetails }) {
-  const [lsps, setLsps] = useState([]);
+export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, loading, hasSession, sessionId, setSpotDetails }) {
+  const [promptSections, setPromptSections] = useState([]);
+  const [allowedModels, setAllowedModels] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    async function loadTemplate() {
+      try {
+        const idToFetch = hasSession ? sessionId : null;
+        const data = await getPromptTemplate(idToFetch);
+        if (data && data.sections) {
+          setPromptSections(data.sections);
+        }
+      } catch (err) {
+        console.error("Failed to load prompt template", err);
+      }
+    }
+
+    async function loadModels() {
+      try {
+        const models = await getAllowedModels();
+        if (models && models.length > 0) {
+          setAllowedModels(models);
+        }
+      } catch (err) {
+        console.error("Failed to load allowed models", err);
+      }
+    }
+
+    loadModels();
+    loadTemplate();
+  }, [hasSession, sessionId]);
+
+  const handleUpdateSection = (idx, newContent) => {
+    const updated = [...promptSections];
+    updated[idx].content = newContent;
+    setPromptSections(updated);
+  };
+
+  useEffect(() => {
+    if (promptSections.length > 0 && !hasSession) {
+      updateConfig("promptSections", promptSections);
+    }
+  }, [promptSections, hasSession]);
 
   useEffect(() => {
     if (hasSession) return;
@@ -123,13 +167,15 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
               />
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
-              <label>Expiry Timestamp</label>
+              <label>Expiry Hours</label>
               <input
-                type="datetime-local"
-                value={config.expiryTimestamp}
-                onChange={e => updateConfig("expiryTimestamp", e.target.value)}
+                type="number"
+                min="1"
+                value={config.expiryHours}
+                onChange={e => updateConfig("expiryHours", e.target.value)}
                 disabled={hasSession}
                 style={{ width: '100%' }}
+                placeholder="e.g. 24"
               />
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
@@ -174,36 +220,119 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                 value={config.model}
                 onChange={e => updateConfig("model", e.target.value)}
                 disabled={hasSession}
-                style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
+                style={{ width: '100%', appearance: 'none', paddingRight: '32px', fontSize: '14px', padding: '12px', fontWeight: '500' }}
               >
-                <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-                <option value="claude-3-5-haiku">claude-3-5-haiku</option>
-                <option value="claude-haiku-4-5">claude-haiku-4-5</option>
-                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
-                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                <option value="gemini-3.0-pro">gemini-3.0-pro</option>
-                <option value="gemini-3.0-flash">gemini-3.0-flash</option>
+                {allowedModels.length > 0 ? (
+                  allowedModels.map(m => <option key={m} value={m}>{m}</option>)
+                ) : (
+                  <>
+                    <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+                    <option value="claude-haiku-4-5">claude-haiku-4-5</option>
+                  </>
+                )}
               </select>
               <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
           </div>
           <div className={styles.formGroup}>
-            <label>Agent prompt</label>
-            <textarea
-              rows={8}
-              value={config.agentPrompt}
-              onChange={e => updateConfig("agentPrompt", e.target.value)}
-              disabled={hasSession}
-              className={styles.codeBlock}
-              spellCheck="false"
-            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Agent Instruction Builder</label>
+            <button
+              className={styles.btnSecondary}
+              onClick={() => setShowModal(true)}
+            >
+              Open Configuration Tabs
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Configuration Modal */}
+      {showModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+          zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: 'var(--bg-panel)', width: '900px', maxWidth: '90%', height: '70vh',
+            borderRadius: '12px', border: '1px solid var(--border-color)',
+            display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: 'var(--shadow)'
+          }}>
+            {/* Header */}
+            <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>Agent Instruction Overlay</h3>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '20px' }}>
+                &times;
+              </button>
+            </div>
+
+            {/* Content Area */}
+            <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+              {/* Tab Column */}
+              <div style={{ width: '250px', borderRight: '1px solid var(--border-color)', background: 'var(--bg-page)', overflowY: 'auto' }}>
+                {promptSections.map((sec, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => setActiveTab(idx)}
+                    style={{
+                      padding: '16px', fontSize: '12px', cursor: 'pointer', borderBottom: '1px solid var(--border-color)',
+                      background: activeTab === idx ? 'var(--bg-surface)' : 'transparent',
+                      borderLeft: activeTab === idx ? '4px solid var(--brand-agent)' : '4px solid transparent',
+                      fontWeight: activeTab === idx ? '600' : '400',
+                      color: activeTab === idx ? 'var(--text-primary)' : 'var(--text-secondary)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      {sec.heading}
+                      {!sec.editable && <span style={{ color: 'var(--status-err)', fontSize: '10px' }}>Locked</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Editor Pane */}
+              <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column' }}>
+                {promptSections[activeTab] && (
+                  <>
+                    <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                        {promptSections[activeTab].heading}
+                      </span>
+                      {!promptSections[activeTab].editable && <span style={{ fontSize: '11px', color: 'var(--status-err)', fontWeight: '600' }}>🔒 Editing Disabled for Runtime Integrity</span>}
+                    </div>
+                    <textarea
+                      value={promptSections[activeTab].content}
+                      onChange={e => handleUpdateSection(activeTab, e.target.value)}
+                      disabled={!promptSections[activeTab].editable}
+                      style={{
+                        flex: 1, width: '100%', fontFamily: 'var(--font-mono)', fontSize: '13px', padding: '16px',
+                        borderRadius: '8px', border: '1px solid var(--border-color)', resize: 'none',
+                        backgroundColor: !promptSections[activeTab].editable ? 'var(--bg-hover)' : 'var(--bg-surface)'
+                      }}
+                      spellCheck="false"
+                    />
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Footer Action Bar */}
+            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: 'var(--bg-page)' }}>
+              <button onClick={() => setShowModal(false)} className={styles.btnSecondary} style={{ width: 'auto', padding: '8px 16px' }}>
+                Close Configuration
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       <div className={styles.sidebarGroup} style={{ background: 'transparent', border: 'none', padding: 0 }}>
         {!hasSession ? (
-          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryTimestamp))}>
+          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryHours))}>
             {loading ? 'Initializing...' : 'Run Scenario'}
           </button>
         ) : (
