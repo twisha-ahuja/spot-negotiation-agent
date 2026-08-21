@@ -1,4 +1,3 @@
-import sampleTrace from './resp.json';
 import { AGENT_API_BASE } from './urls';
 
 /**

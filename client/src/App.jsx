@@ -108,39 +108,51 @@ export default function App() {
           // Hydrate past Negotiation Chat logs if existing
           const tId = fetchedTransporterList?.[0]?.transporter_id;
           const transDoc = res.docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === tId);
-          if (transDoc && transDoc.agent_logs) {
-            setTranscript(transDoc.agent_logs.map(log => ({
-              round: log.round,
-              traceId: transDoc._id?.$oid || "trace_" + log.round,
-              transporterName: fetchedTransporterList?.[0]?.transporter_name || 'Transporter',
-              transporterQuote: log.transporter_rate,
-              agentCounter: log.counter_offer_rate,
-              status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
-              latency: log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-',
-              tokens: log.usage?.output_tokens || '-',
-              cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
-              langfuseTrace: {
-                id: transDoc._id?.$oid || "trace_" + log.round,
-                name: "Agent Negotiation Round " + log.round,
-                timestamp: log.timestamp?.$date || new Date().toISOString(),
-                latency: log.usage?.duration_api_ms ? log.usage.duration_api_ms / 1000 : 0,
-                totalCost: log.usage?.total_cost_usd || 0,
-                sessionId: transDoc.truck_enquiry_id,
-                environment: "production",
-                input: {
-                  truck_enquiry_id: transDoc.truck_enquiry_id,
-                  transporter_id: transDoc.transporter_id,
-                  transporter_rate: log.transporter_rate,
-                  quotes_count: log.total_quotes_count
-                },
-                output: {
-                  counter_offer_rate: log.counter_offer_rate,
-                  rationale: log.reasoning,
-                  negotiate: log.negotiate
-                },
-                observations: sampleTrace.observations
-              }
-            })));
+          if (transDoc) {
+            if (transDoc.agent_logs) {
+              setTranscript(transDoc.agent_logs.map(log => ({
+                round: log.round,
+                traceId: transDoc._id?.$oid || "trace_" + log.round,
+                transporterName: fetchedTransporterList?.[0]?.transporter_name || 'Transporter',
+                transporterQuote: log.transporter_rate,
+                agentCounter: log.counter_offer_rate,
+                status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
+                latency: log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-',
+                tokens: log.usage?.output_tokens || '-',
+                cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
+                langfuseTrace: {
+                  id: transDoc._id?.$oid || "trace_" + log.round,
+                  name: "Agent Negotiation Round " + log.round,
+                  timestamp: log.timestamp?.$date || new Date().toISOString(),
+                  latency: log.usage?.duration_api_ms ? log.usage.duration_api_ms / 1000 : 0,
+                  totalCost: log.usage?.total_cost_usd || 0,
+                  sessionId: transDoc.truck_enquiry_id,
+                  environment: "production",
+                  input: {
+                    truck_enquiry_id: transDoc.truck_enquiry_id,
+                    transporter_id: transDoc.transporter_id,
+                    transporter_rate: log.transporter_rate,
+                    quotes_count: log.total_quotes_count
+                  },
+                  output: {
+                    counter_offer_rate: log.counter_offer_rate,
+                    rationale: log.reasoning,
+                    negotiate: log.negotiate
+                  },
+                  observations: sampleTrace.observations
+                }
+              })));
+            }
+
+            if (transDoc.pending_round) {
+              setPendingQuote(transDoc.pending_round.transporter_rate);
+              setLoading(true);
+              setPolling(true);
+            } else {
+              setPendingQuote(null);
+              setLoading(false);
+              setPolling(false);
+            }
           }
 
           // Update rates actively assigned
@@ -170,9 +182,9 @@ export default function App() {
 
         const logs = transDoc?.agent_logs || [];
 
-        // If logs size meets or exceeds the local transcript array, the agent has effectively responded.
-        if (logs.length > 0 && logs.length >= transcript.length) {
-
+        // If pending_round is null/undefined, the backend agent has successfully concluded the cycle and committed logs natively.
+        if (transDoc && !transDoc.pending_round && transDoc.agent_logs) {
+          const logs = transDoc.agent_logs;
           setTranscript(logs.map(log => ({
             round: log.round,
             traceId: transDoc._id?.$oid || "trace_" + log.round,
@@ -208,10 +220,12 @@ export default function App() {
 
           setPolling(false);
           setLoading(false);
+          setPendingQuote(null);
         } else if (pollCount > 15) {
           // Timeout after ~225 seconds based on 15s poll
           setPolling(false);
           setLoading(false);
+          setPendingQuote(null);
           toast.error("Agent is taking too long to respond. Polling timed out.");
         }
       } catch (err) {
@@ -323,38 +337,19 @@ export default function App() {
   const handleBid = async (quoteInput) => {
     if (!sessionId) return;
     setLoading(true);
-    setPendingQuote(quoteInput);
     try {
       // Post actual pipeline request through the newly created async API cleanly
       const transporterId = config.selectedTransporter?.transporter_id || "UNKNOWN_ID";
       await submitTransporterQuote(sessionId, transporterId, quoteInput);
 
-      // Instantly inject the transporter's manual quote into the UI transcript locally
-      setTranscript(prev => [...prev, {
-        round: prev.length + 1,
-        traceId: 'pending...',
-        transporterName: config.transporterName || 'Transporter',
-        transporterQuote: Number(quoteInput),
-        agentCounter: null,
-        status: "Negotiating",
-        latency: '-',
-        tokens: '-',
-        cost: '-',
-        langfuseTrace: {
-          id: 'pending...',
-          name: "Agent processing...",
-          timestamp: new Date().toISOString(),
-          latency: 0,
-          totalCost: 0,
-          sessionId: sessionId,
-          environment: "production",
-          input: { status: "Awaiting agent...", rate: quoteInput },
-          output: { status: "Computing heuristics..." },
-          observations: sampleTrace.observations
-        }
-      }]);
-
-      setPendingQuote(null);
+      // Immediately fetch once to pick up the pending_round document created by the backend
+      const res = await getPlaygroundSpotDetails(sessionId);
+      const transDoc = res?.docs?.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
+      
+      if (transDoc && transDoc.pending_round) {
+        setPendingQuote(transDoc.pending_round.transporter_rate);
+      }
+      
       setPolling(true); // Engages the asynchronous listener hook mapped above
     } catch (e) {
       console.error(e);

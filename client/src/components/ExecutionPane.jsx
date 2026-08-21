@@ -123,7 +123,7 @@ export default function ExecutionPane({
         <div>
           {computingRates ? (
             <div className={styles.ratesBox} style={{ justifyContent: 'center', height: '42px', alignItems: 'center' }}>
-               <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>⚙️ Rates are being calculated...</span>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>⚙️ Rates are being calculated...</span>
             </div>
           ) : computedTarget ? (
             <div className={styles.ratesBox}>
@@ -208,9 +208,9 @@ export default function ExecutionPane({
                       <svg width="14" height="14" fill="none" stroke="var(--brand-agent-text)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     </div>
                     <div className={styles.bubbleLeft}>
-                      {tr.langfuseTrace?.output?.rationale
-                        ? tr.langfuseTrace.output.rationale
-                        : `₹${tr.agentCounter?.toLocaleString() || tr.transporterQuote.toLocaleString()}`}
+                      {tr.agentCounter
+                        ? <strong>₹{tr.agentCounter.toLocaleString()}</strong>
+                        : <span style={{ fontStyle: 'italic', color: 'black' }}>Declined to counter.</span>}
                     </div>
                   </div>
                 </div>
@@ -242,7 +242,7 @@ export default function ExecutionPane({
                   <svg width="14" height="14" fill="none" stroke="var(--brand-agent-text)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 </div>
                 <div className={styles.pendingBubble}>
-                  Processing strategy...
+                  Thinking ...
                 </div>
               </div>
             </div>
