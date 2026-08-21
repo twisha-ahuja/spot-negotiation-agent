@@ -2,6 +2,6 @@
 export const BASE_URL = "https://staging.lorri.in";
 
 // Agent specific router base
-export const AGENT_API_BASE = `http://127.0.0.1:8000`;
+export const AGENT_API_BASE = `${BASE_URL}/api/agent`;
 // Autocomplete router base
 export const AUTOCOMPLETE_API = `${BASE_URL}/api/apiuser/autocomplete`;
