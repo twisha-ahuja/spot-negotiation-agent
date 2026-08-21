@@ -5,7 +5,7 @@ import { AUTOCOMPLETE_API } from '../api/urls';
 import { getPromptTemplate, getAllowedModels } from '../api/spotApi';
 import styles from '../styles/SidebarConfig.module.css';
 
-export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, loading, hasSession, sessionId, setSpotDetails }) {
+export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, handleResetSession, loading, hasSession, sessionId, setSpotDetails }) {
   const [promptSections, setPromptSections] = useState([]);
   const [allowedModels, setAllowedModels] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -336,7 +336,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             {loading ? 'Initializing...' : 'Run Scenario'}
           </button>
         ) : (
-          <button className={styles.btnSecondary} onClick={() => window.location.reload()} style={{ width: '100%', marginTop: '16px' }}>
+          <button className={styles.btnSecondary} onClick={handleResetSession} style={{ width: '100%', marginTop: '16px' }}>
             Reset Session
           </button>
         )}

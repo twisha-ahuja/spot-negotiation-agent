@@ -363,6 +363,19 @@ export default function App() {
     }
   };
 
+  const handleResetSession = () => {
+    window.history.pushState({}, '', '/new');
+    setAppMode('new');
+    setSessionId(null);
+    setConfig(EMPTY_CONFIG);
+    setTranscript([]);
+    setSpotDetails(null);
+    setComputedTarget(null);
+    setComputedFair(null);
+    setComputedWalkaway(null);
+    setPendingQuote(null);
+  };
+
   if (appMode === 'landing') {
     return (
       <div className={styles.appContainer}>
@@ -418,6 +431,7 @@ export default function App() {
           config={config}
           updateConfig={updateConfig}
           handleStartSession={handleStartSession}
+          handleResetSession={handleResetSession}
           loading={loading}
           hasSession={!!sessionId}
           sessionId={sessionId}
