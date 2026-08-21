@@ -14,14 +14,12 @@ const EMPTY_CONFIG = {
   origin: null,
   destination: null,
   truckType: {
-    label: "18 MT MXL Container",
-    value: "18 MT MXL Container"
   },
   placementDate: "",
   expiryHours: 24,
   company: null,
   model: "",
-  agentPrompt: "You are a spot-rate negotiation agent for a freight brokerage. Negotiate firmly but fairly toward the target rate, never below the walkaway rate."
+  agentPrompt: ""
 };
 
 const getPathParams = () => {
@@ -143,10 +141,12 @@ export default function App() {
             }
           }
 
-          // Update rates actively assigned
-          setComputedTarget(spot.target_rate || null);
-          setComputedFair(spot.fair_rate || null);
-          setComputedWalkaway(spot.walkaway_rate || null);
+          // Update rates actively assigned only if they actually exist to prevent overwriting locally computed ones
+          if (spot.target_rate) {
+            setComputedTarget(spot.target_rate);
+            setComputedFair(spot.fair_rate || null);
+            setComputedWalkaway(spot.walkaway_rate || null);
+          }
         }
       } catch (err) {
         console.error("Failed to fetch spot details:", err);

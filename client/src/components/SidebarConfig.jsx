@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import AutoComplete from './Autocomplete';
 import LSP_DATA from './lsp.json';
+import RAW_TRUCKS from '../trucks.json';
 import { AUTOCOMPLETE_API } from '../api/urls';
+
+// Hector trucks
+const TRUCKS_LIST = Array.from(new Set(RAW_TRUCKS.map(t => t.name).filter(Boolean)));
+
 import { getPromptTemplate, getAllowedModels } from '../api/spotApi';
 import styles from '../styles/SidebarConfig.module.css';
 
@@ -128,24 +133,14 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Truck Type</label>
-              <div className={styles.selectWrapper}>
-                <select
-                  value={config.truckType?.value || ''}
-                  onChange={e => updateConfig("truckType", { label: e.target.value, value: e.target.value })}
-                  disabled={hasSession}
-                  style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
-                >
-                  <option value="18 MT MXL Container">18 MT MXL Container</option>
-                  <option value="12 WHEELER OPEN BODY TRUCK (20/21 MT)">12 WHEELER OPEN BODY TRUCK (20/21 MT)</option>
-                  <option value="Open Truck 9 MT">Open Truck 9 MT</option>
-                  <option value="32 FT MULTI AXLE CONTAINER (15 MT)">32 FT MULTI AXLE CONTAINER (15 MT)</option>
-                  <option value="20 MT MXL Container">20 MT MXL Container</option>
-                  <option value="24 MT MXL Container">24 MT MXL Container</option>
-                  <option value="32 FT SXL Container">32 FT SXL Container</option>
-                  <option value="32 FT MXL Container">32 FT MXL Container</option>
-                </select>
-                <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
+              <AutoComplete
+                placeholder="Search truck type..."
+                value={config.truckType?.label || config.truckType}
+                onChange={val => updateConfig("truckType", { label: val, value: val })}
+                onSelect={val => updateConfig("truckType", { label: val, value: val })}
+                localData={TRUCKS_LIST}
+                disabled={hasSession}
+              />
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Select Transporter</label>

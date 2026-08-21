@@ -1,0 +1,595 @@
+[
+    {
+        "field_type": "truck",
+        "field_id": "bd33a18a-81a0-11f1-85b8-564610ae30ca",
+        "name": "12 WHEELER OPEN BODY TRUCK (20/21 MT)",
+        "page_display_status": true,
+        "truck_type": "12 WHEELER OPEN BODY TRUCK (20/21 MT)",
+        "network_truck_type": "12 WHEELER OPEN BODY TRUCK (20/21 MT)",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d69cc-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "18 MT MXL Container",
+        "page_display_status": true,
+        "truck_type": "18 MT MXL Container",
+        "network_truck_type": "18 MT MXL Container",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d7494-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "21 MT MXL Container",
+        "page_display_status": true,
+        "truck_type": "21 MT MXL Container",
+        "network_truck_type": "21 MT MXL Container",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d7516-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "23 MT MXL Container",
+        "page_display_status": true,
+        "truck_type": "23 MT MXL Container",
+        "network_truck_type": "23 MT MXL Container",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d70fc-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "5 MT SXL Container",
+        "page_display_status": true,
+        "truck_type": "5 MT SXL Container",
+        "network_truck_type": "5 MT SXL Container",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d77f0-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "7 MT SXL Container",
+        "page_display_status": true,
+        "truck_type": "7 MT SXL Container",
+        "network_truck_type": "7 MT SXL Container",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d7368-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Closed Container 3.5 MT",
+        "page_display_status": true,
+        "truck_type": "Closed Container 3.5 MT",
+        "network_truck_type": "Closed Container 3.5 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d71c4-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Closed Container 7MT",
+        "page_display_status": true,
+        "truck_type": "Closed Container 7MT",
+        "network_truck_type": "Closed Container 7MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6f08-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Closed container 9 MT",
+        "page_display_status": true,
+        "truck_type": "Closed container 9 MT",
+        "network_truck_type": "Closed container 9 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d7296-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 10 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 10 MT",
+        "network_truck_type": "Open truck 10 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d702a-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 12 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 12 MT",
+        "network_truck_type": "Open truck 12 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d75ac-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 14 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 14 MT",
+        "network_truck_type": "Open truck 14 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d679c-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 16 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 16 MT",
+        "network_truck_type": "Open truck 16 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d7750-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 18 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 18 MT",
+        "network_truck_type": "Open truck 18 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d7638-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 2 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 2 MT",
+        "network_truck_type": "Open truck 2 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6f9e-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 2.5MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 2.5MT",
+        "network_truck_type": "Open truck 2.5MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6df0-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 3 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 3 MT",
+        "network_truck_type": "Open truck 3 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6bca-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 3.5 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 3.5 MT",
+        "network_truck_type": "Open truck 3.5 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d73fe-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 4MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 4MT",
+        "network_truck_type": "Open truck 4MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6ca6-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 5 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 5 MT",
+        "network_truck_type": "Open truck 5 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d76c4-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 6 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 6 MT",
+        "network_truck_type": "Open truck 6 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6d46-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 7 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 7 MT",
+        "network_truck_type": "Open truck 7 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "field_type": "truck",
+        "field_id": "123d6a80-fdee-11f0-ab47-4ae2c5bfac23",
+        "name": "Open truck 9 MT",
+        "page_display_status": true,
+        "truck_type": "Open truck 9 MT",
+        "network_truck_type": "Open truck 9 MT",
+        "from_truck_master": true,
+        "network_truck_type_group": "general"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3377"
+        },
+        "field_id": "TRUCK000056",
+        "field_type": "truck",
+        "name": "10 WHEELER OPEN BODY TRUCK (15/16 MT)",
+        "page_display_status": true,
+        "network_truck_type": "10 WHEELER OPEN BODY TRUCK (15/16 MT)",
+        "network_truck_type_group": "10 WHEELER OPEN BODY TRUCK (15/16 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c338b"
+        },
+        "field_id": "TRUCK000076",
+        "field_type": "truck",
+        "name": "10 WHEELER OPEN BODY TRUCK (18/19 MT)",
+        "page_display_status": true,
+        "network_truck_type": "10 WHEELER OPEN BODY TRUCK (18/19 MT)",
+        "network_truck_type_group": "10 WHEELER OPEN BODY TRUCK (18/19 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3379"
+        },
+        "field_id": "TRUCK000058",
+        "field_type": "truck",
+        "name": "12 WHEELER OPEN BODY TRUCK (20/21 MT)",
+        "page_display_status": true,
+        "network_truck_type": "12 WHEELER OPEN BODY TRUCK (20/21 MT)",
+        "network_truck_type_group": "12 WHEELER OPEN BODY TRUCK (20/21 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3383"
+        },
+        "field_id": "TRUCK000068",
+        "field_type": "truck",
+        "name": "12 WHEELER OPEN BODY TRUCK (24/25 MT)",
+        "page_display_status": true,
+        "network_truck_type": "12 WHEELER OPEN BODY TRUCK (24/25 MT)",
+        "network_truck_type_group": "12 WHEELER OPEN BODY TRUCK (24/25 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3384"
+        },
+        "field_id": "TRUCK000069",
+        "field_type": "truck",
+        "name": "14 WHEELER OPEN BODY TRUCK (30 MT)",
+        "page_display_status": true,
+        "network_truck_type": "14 WHEELER OPEN BODY TRUCK (30 MT)",
+        "network_truck_type_group": "14 WHEELER OPEN BODY TRUCK (30 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c337b"
+        },
+        "field_id": "TRUCK000060",
+        "field_type": "truck",
+        "name": "18 WHEELER OPEN BODY TRUCK",
+        "page_display_status": true,
+        "network_truck_type": "18 WHEELER OPEN BODY TRUCK",
+        "network_truck_type_group": "18 WHEELER OPEN BODY TRUCK"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3381"
+        },
+        "field_id": "TRUCK000066",
+        "field_type": "truck",
+        "name": "20 FT CONTAINER (RAIL)",
+        "page_display_status": true,
+        "network_truck_type": "20 FT CONTAINER (RAIL)",
+        "network_truck_type_group": "20 FT CONTAINER (RAIL)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3385"
+        },
+        "field_id": "TRUCK000070",
+        "field_type": "truck",
+        "name": "20 FT MULTI AXLE CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "20 FT MULTI AXLE CONTAINER",
+        "network_truck_type_group": "20 FT MULTI AXLE CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3393"
+        },
+        "field_id": "TRUCK000084",
+        "field_type": "truck",
+        "name": "20 FT REEFER",
+        "page_display_status": true,
+        "network_truck_type": "20 FT REEFER",
+        "network_truck_type_group": "20 FT REEFER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c337c"
+        },
+        "field_id": "TRUCK000061",
+        "field_type": "truck",
+        "name": "20 FT SINGLE AXLE CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "20 FT SINGLE AXLE CONTAINER",
+        "network_truck_type_group": "20 FT SINGLE AXLE CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c338d"
+        },
+        "field_id": "TRUCK000078",
+        "field_type": "truck",
+        "name": "20 FT TRAILER",
+        "page_display_status": true,
+        "network_truck_type": "20 FT TRAILER",
+        "network_truck_type_group": "20 FT TRAILER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3396"
+        },
+        "field_id": "TRUCK000087",
+        "field_type": "truck",
+        "name": "20 MT TANKER",
+        "page_display_status": true,
+        "network_truck_type": "20 MT TANKER",
+        "network_truck_type_group": "20 MT TANKER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3389"
+        },
+        "field_id": "TRUCK000074",
+        "field_type": "truck",
+        "name": "22 FT SINGLE AXLE CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "22 FT SINGLE AXLE CONTAINER",
+        "network_truck_type_group": "22 FT SINGLE AXLE CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3391"
+        },
+        "field_id": "TRUCK000082",
+        "field_type": "truck",
+        "name": "22 WHEELER OPEN BODY TRUCK",
+        "page_display_status": true,
+        "network_truck_type": "22 WHEELER OPEN BODY TRUCK",
+        "network_truck_type_group": "22 WHEELER OPEN BODY TRUCK"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3382"
+        },
+        "field_id": "TRUCK000067",
+        "field_type": "truck",
+        "name": "24 FT MULTI AXLE CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "24 FT MULTI AXLE CONTAINER",
+        "network_truck_type_group": "24 FT MULTI AXLE CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3394"
+        },
+        "field_id": "TRUCK000085",
+        "field_type": "truck",
+        "name": "24 FT REEFER",
+        "page_display_status": true,
+        "network_truck_type": "24 FT REEFER",
+        "network_truck_type_group": "24 FT REEFER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c337d"
+        },
+        "field_id": "TRUCK000062",
+        "field_type": "truck",
+        "name": "24 FT SINGLE AXLE CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "24 FT SINGLE AXLE CONTAINER",
+        "network_truck_type_group": "24 FT SINGLE AXLE CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3397"
+        },
+        "field_id": "TRUCK000088",
+        "field_type": "truck",
+        "name": "28 FT SINGLE AXLE CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "28 FT SINGLE AXLE CONTAINER",
+        "network_truck_type_group": "28 FT SINGLE AXLE CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c337a"
+        },
+        "field_id": "TRUCK000059",
+        "field_type": "truck",
+        "name": "32 FT MULTI AXLE CONTAINER (15 MT)",
+        "page_display_status": true,
+        "network_truck_type": "32 FT MULTI AXLE CONTAINER (15 MT)",
+        "network_truck_type_group": "32 FT MULTI AXLE CONTAINER (15 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c338f"
+        },
+        "field_id": "TRUCK000080",
+        "field_type": "truck",
+        "name": "32 FT MULTI AXLE CONTAINER (18 MT)",
+        "page_display_status": true,
+        "network_truck_type": "32 FT MULTI AXLE CONTAINER (18 MT)",
+        "network_truck_type_group": "32 FT MULTI AXLE CONTAINER (18 MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3395"
+        },
+        "field_id": "TRUCK000086",
+        "field_type": "truck",
+        "name": "32 FT MULTI AXLE REEFER CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "32 FT MULTI AXLE REEFER CONTAINER",
+        "network_truck_type_group": "32 FT MULTI AXLE REEFER CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c337e"
+        },
+        "field_id": "TRUCK000063",
+        "field_type": "truck",
+        "name": "32 FT SINGLE AXLE CONTAINER (7MT)",
+        "page_display_status": true,
+        "network_truck_type": "32 FT SINGLE AXLE CONTAINER (7MT)",
+        "network_truck_type_group": "32 FT SINGLE AXLE CONTAINER (7MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c338c"
+        },
+        "field_id": "TRUCK000077",
+        "field_type": "truck",
+        "name": "32 FT SINGLE AXLE CONTAINER (9MT)",
+        "page_display_status": true,
+        "network_truck_type": "32 FT SINGLE AXLE CONTAINER (9MT)",
+        "network_truck_type_group": "32 FT SINGLE AXLE CONTAINER (9MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c338a"
+        },
+        "field_id": "TRUCK000075",
+        "field_type": "truck",
+        "name": "32 FT SINGLE AXLE HQ CONTAINER (7MT)",
+        "page_display_status": true,
+        "network_truck_type": "32 FT SINGLE AXLE HQ CONTAINER (7MT)",
+        "network_truck_type_group": "32 FT SINGLE AXLE HQ CONTAINER (7MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3390"
+        },
+        "field_id": "TRUCK000081",
+        "field_type": "truck",
+        "name": "32 FT SINGLE AXLE HQ CONTAINER (9MT)",
+        "page_display_status": true,
+        "network_truck_type": "32 FT SINGLE AXLE HQ CONTAINER (9MT)",
+        "network_truck_type_group": "32 FT SINGLE AXLE HQ CONTAINER (9MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3388"
+        },
+        "field_id": "TRUCK000073",
+        "field_type": "truck",
+        "name": "40 FT CONTAINER",
+        "page_display_status": true,
+        "network_truck_type": "40 FT CONTAINER",
+        "network_truck_type_group": "40 FT CONTAINER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3386"
+        },
+        "field_id": "TRUCK000071",
+        "field_type": "truck",
+        "name": "40 FT TRAILER",
+        "page_display_status": true,
+        "network_truck_type": "40 FT TRAILER",
+        "network_truck_type_group": "40 FT TRAILER"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c337f"
+        },
+        "field_id": "TRUCK000064",
+        "field_type": "truck",
+        "name": "6 WHEELER OPEN BODY TRUCK (19FT Eicher Canter)",
+        "page_display_status": true,
+        "network_truck_type": "6 WHEELER OPEN BODY TRUCK (19FT Eicher Canter)",
+        "network_truck_type_group": "6 WHEELER OPEN BODY TRUCK (19FT Eicher Canter)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3378"
+        },
+        "field_id": "TRUCK000057",
+        "field_type": "truck",
+        "name": "6 WHEELER OPEN BODY TRUCK (9MT)",
+        "page_display_status": true,
+        "network_truck_type": "6 WHEELER OPEN BODY TRUCK (9MT)",
+        "network_truck_type_group": "6 WHEELER OPEN BODY TRUCK (9MT)"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c338e"
+        },
+        "field_id": "TRUCK000079",
+        "field_type": "truck",
+        "name": "LCV",
+        "page_display_status": true,
+        "network_truck_type": "LCV",
+        "network_truck_type_group": "LCV"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3380"
+        },
+        "field_id": "TRUCK000065",
+        "field_type": "truck",
+        "name": "LCV OPEN BODY TEMPO",
+        "page_display_status": true,
+        "network_truck_type": "LCV OPEN BODY TEMPO",
+        "network_truck_type_group": "LCV OPEN BODY TEMPO"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3392"
+        },
+        "field_id": "TRUCK000083",
+        "field_type": "truck",
+        "name": "ODC VEHICLE",
+        "page_display_status": true,
+        "network_truck_type": "ODC VEHICLE",
+        "network_truck_type_group": "ODC VEHICLE"
+    },
+    {
+        "_id": {
+            "$oid": "6a314a7076610c8e8c4c3387"
+        },
+        "field_id": "TRUCK000072",
+        "field_type": "truck",
+        "name": "TATA 407 REEFER",
+        "page_display_status": true,
+        "network_truck_type": "TATA 407 REEFER",
+        "network_truck_type_group": "TATA 407 REEFER"
+    }
+]

@@ -22,7 +22,7 @@ const AutoComplete = ({
     const [show, setShow] = useState(false)
     const abortControllerRef = useRef(null)
 
-    const getLabel = (opt) => opt[labelKey] || opt.transporter_name || opt.name || ''
+    const getLabel = (opt) => typeof opt === 'string' ? opt : (opt?.label || opt[labelKey] || opt?.transporter_name || opt?.name || '')
 
     const onSuggestionsFetchRequested = useCallback(debounce(({ value: inputValue }) => {
         if (localData) {
