@@ -11,7 +11,13 @@ export default function ExecutionPane({
 
   // Local state for manual input before saving
   const [tempTarget, setTempTarget] = useState('');
-  const [tempWalkaway, setTempWalkaway] = useState('');
+
+  // Local state for toggling rationale visibility
+  const [expandedReasonings, setExpandedReasonings] = useState({});
+
+  const toggleReasoning = (traceId) => {
+    setExpandedReasonings(prev => ({ ...prev, [traceId]: !prev[traceId] }));
+  };
 
   // Auto-select newest trace
   useEffect(() => {
@@ -207,10 +213,32 @@ export default function ExecutionPane({
                     <div className={styles.avatarLeft}>
                       <svg width="14" height="14" fill="none" stroke="var(--brand-agent-text)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     </div>
-                    <div className={styles.bubbleLeft}>
-                      {tr.agentCounter
-                        ? <strong>₹{tr.agentCounter.toLocaleString()}</strong>
-                        : <span style={{ fontStyle: 'italic', color: 'black' }}>Declined to counter.</span>}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <div className={styles.bubbleLeft}>
+                        {tr.agentCounter
+                          ? <strong>₹{tr.agentCounter.toLocaleString()}</strong>
+                          : <span style={{ fontStyle: 'italic', color: 'black' }}>Declined to counter.</span>}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px', paddingLeft: '4px' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                          {tr.langfuseTrace?.timestamp ? new Date(tr.langfuseTrace.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                        </span>
+                        {tr.langfuseTrace?.output?.rationale && (
+                          <button
+                            onClick={() => toggleReasoning(tr.traceId)}
+                            style={{ background: 'none', border: 'none', color: 'var(--brand-agent)', fontSize: '11px', cursor: 'pointer', padding: 0 }}
+                          >
+                            {expandedReasonings[tr.traceId] ? 'Hide Reasoning' : 'View Reasoning'}
+                          </button>
+                        )}
+                      </div>
+
+                      {expandedReasonings[tr.traceId] && tr.langfuseTrace?.output?.rationale && (
+                        <div style={{ marginTop: '8px', padding: '10px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5', maxWidth: '300px' }}>
+                          {tr.langfuseTrace.output.rationale}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

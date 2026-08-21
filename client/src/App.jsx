@@ -178,9 +178,7 @@ export default function App() {
       try {
         pollCount++;
         const res = await getPlaygroundSpotDetails(sessionId);
-        const transDoc = res?.docs?.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
-
-        const logs = transDoc?.agent_logs || [];
+        const transDoc = res?.docs?.length > 0 && res?.docs?.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
 
         // If pending_round is null/undefined, the backend agent has successfully concluded the cycle and committed logs natively.
         if (transDoc && !transDoc.pending_round && transDoc.agent_logs) {
@@ -231,7 +229,7 @@ export default function App() {
       } catch (err) {
         console.error("Polling fetch failed", err);
       }
-    }, 15000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [polling, sessionId, transcript.length, config.selectedTransporter, config.transporterName]);
@@ -345,11 +343,11 @@ export default function App() {
       // Immediately fetch once to pick up the pending_round document created by the backend
       const res = await getPlaygroundSpotDetails(sessionId);
       const transDoc = res?.docs?.find(d => d.type === 'transporter_negotiation' && d.transporter_id === transporterId);
-      
+
       if (transDoc && transDoc.pending_round) {
         setPendingQuote(transDoc.pending_round.transporter_rate);
       }
-      
+
       setPolling(true); // Engages the asynchronous listener hook mapped above
     } catch (e) {
       console.error(e);
