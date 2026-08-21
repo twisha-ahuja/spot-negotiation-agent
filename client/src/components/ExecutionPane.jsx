@@ -262,7 +262,7 @@ export default function ExecutionPane({
             </div>
           )}
 
-          {loading && (
+          {loading && pendingQuote && (
             <div className={styles.messageLeft}>
               <span className={styles.messageAuthorLeft}>Lorri AI Agent</span>
               <div className={styles.messageBubbleRowLeft}>
