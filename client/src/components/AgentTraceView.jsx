@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getSessionTraces, getTraceData } from '../api/langfuseApi';
 import styles from '../styles/AgentTraceView.module.css';
 
 // Langfuse-style Icons
@@ -19,15 +20,56 @@ function getIcon(type) {
   return Icons.span;
 }
 
-export default function AgentTraceView({ activeTrace, loading }) {
+export default function AgentTraceView({ activeTrace, loading: parentLoading, sessionId }) {
   const [selectedObsId, setSelectedObsId] = useState(null);
   const [showUsageBreakdown, setShowUsageBreakdown] = useState(false);
+  const [langfuseTrace, setLangfuseTrace] = useState(null);
+  const [loadingTrace, setLoadingTrace] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
-  if (loading) {
+  useEffect(() => {
+    async function fetchTrace() {
+      if (!sessionId || !activeTrace) return;
+      setErrorMsg(null);
+      try {
+        const traces = await getSessionTraces(sessionId);
+        if (traces && traces.length > 0) {
+          // Attempt to match the exact active round dynamically, else default to the latest trace
+          const matchedTrace = traces.find(t => t.name && t.name.includes(`Round ${activeTrace.round}`)) || traces[0];
+          const fullTrace = await getTraceData(matchedTrace.id);
+          setLangfuseTrace(fullTrace);
+        } else {
+          setLangfuseTrace(null);
+        }
+      } catch (err) {
+        console.error("Langfuse fetch error:", err);
+        setErrorMsg(err.message);
+      } finally {
+        setLoadingTrace(false);
+      }
+    }
+
+    setLoadingTrace(true);
+    fetchTrace();
+
+    const interval = setInterval(fetchTrace, 40000);
+    return () => clearInterval(interval);
+  }, [sessionId, activeTrace]);
+
+  if (parentLoading || loadingTrace) {
     return <div className={`${styles.container} ${styles.loading}`}>Loading Langfuse Trace...</div>;
   }
 
-  if (!activeTrace || !activeTrace.langfuseTrace) {
+  if (errorMsg) {
+    return (
+      <div className={`${styles.container} ${styles.emptyState}`}>
+        <div style={{ color: 'var(--brand-agent)' }}>Failed to load trace: {errorMsg}</div>
+        <div style={{ fontSize: '12px', marginTop: '4px', opacity: 0.8 }}>Ensure VITE_LANGFUSE_PUBLIC_KEY is set in .env</div>
+      </div>
+    );
+  }
+
+  if (!activeTrace || !langfuseTrace) {
     return (
       <div className={`${styles.container} ${styles.emptyState}`}>
         <div>Select a round to view Langfuse trace</div>
@@ -35,7 +77,7 @@ export default function AgentTraceView({ activeTrace, loading }) {
     );
   }
 
-  const lf = activeTrace.langfuseTrace;
+  const lf = langfuseTrace;
   const observations = [...(lf.observations || [])].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
   // Root trace object
@@ -60,7 +102,7 @@ export default function AgentTraceView({ activeTrace, loading }) {
   const genObs = observations.find(o => o.type === 'GENERATION' && (o.usage || o.usageDetails));
   const usageData = genObs?.usage || genObs?.usageDetails;
 
-  const tokensInfoStr = usageData 
+  const tokensInfoStr = usageData
     ? `${usageData.input || usageData.promptTokens || 0} prompt → ${usageData.output || usageData.completionTokens || 0} completion (Σ ${usageData.total || usageData.totalTokens || 0})`
     : null;
 
@@ -143,32 +185,32 @@ export default function AgentTraceView({ activeTrace, loading }) {
             <span className={styles.badge}>Env: {lf.environment}</span>
             {isRootSelected && <span className={styles.badge}>${(lf.totalCost || 0).toFixed(6)} ⓘ</span>}
             {isRootSelected && tokensInfoStr && (
-              <span 
+              <span
                 className={`${styles.badge} ${styles.badgeInteractive}`}
                 onMouseEnter={() => setShowUsageBreakdown(true)}
                 onMouseLeave={() => setShowUsageBreakdown(false)}
               >
                 {tokensInfoStr}
                 <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4m0-4h.01"></path></svg>
-                
+
                 {showUsageBreakdown && usageData && (
                   <div className={styles.usageDropdown}>
-                    <strong style={{color: 'var(--text-primary)', fontSize: '14px'}}>Usage breakdown</strong>
-                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '14px' }}>Usage breakdown</strong>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {Object.entries(usageData)
                         .filter(([k]) => k !== 'total' && k !== 'totalTokens')
                         .map(([key, value]) => (
-                        <div key={key} className={styles.usageRow}>
-                          <span>{key}</span>
-                          <span>{Number(value).toLocaleString()}</span>
-                        </div>
-                      ))}
+                          <div key={key} className={styles.usageRow}>
+                            <span>{key}</span>
+                            <span>{Number(value).toLocaleString()}</span>
+                          </div>
+                        ))}
                     </div>
 
                     <div className={styles.usageTotal}>
-                        <span>Total usage</span>
-                        <span>{Number(usageData.total || usageData.totalTokens || 0).toLocaleString()}</span>
+                      <span>Total usage</span>
+                      <span>{Number(usageData.total || usageData.totalTokens || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 )}

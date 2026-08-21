@@ -65,7 +65,7 @@ export default function LandingPage({ onSelectMode }) {
           <div className={styles.historyEmpty}>No recent simulations found.</div>
         ) : (
           <div className={styles.historyList}>
-            {sims.map(sim => (
+            {sims?.length > 0 && sims.map(sim => (
               <div
                 key={sim.truck_enquiry_id}
                 className={styles.historyCard}
@@ -87,7 +87,7 @@ export default function LandingPage({ onSelectMode }) {
                   </div>
                 </div>
                 <div className={styles.histFooter}>
-                  <span className={styles.histBadge}>{sim.playground_settings?.model || 'Unknown Model'}</span>
+                  <span className={styles.histBadge}>{sim.playground_settings?.agent_model || 'Unknown Model'}</span>
                   {sim.lane_details?.truck_type?.label && (
                     <span className={styles.histBadge}>{sim.lane_details.truck_type.label}</span>
                   )}

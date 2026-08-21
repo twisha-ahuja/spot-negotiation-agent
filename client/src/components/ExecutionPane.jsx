@@ -67,7 +67,7 @@ export default function ExecutionPane({
         </div>
 
         <div className={styles.roundsList}>
-          {transcript.map((tr, idx) => {
+          {transcript.map((tr, i) => {
             const isActive = activeTraceId === tr.traceId;
             return (
               <div
@@ -80,7 +80,7 @@ export default function ExecutionPane({
                     Round {tr.round}: ₹{tr.transporterQuote}
                   </div>
                   <span className={`${styles.roundCardStatus} ${tr.status === 'Accepted' ? styles.accepted : styles.ongoing}`}>
-                    {tr.status === 'Accepted' ? 'pass' : 'ongoing'}
+                    {tr.status?.toLowerCase() || 'unknown'}
                   </span>
                 </div>
 
@@ -108,7 +108,7 @@ export default function ExecutionPane({
       </div>
 
       {/* Right Column: Trace Details */}
-      <AgentTraceView activeTrace={activeTrace} loading={loading} />
+      <AgentTraceView activeTrace={activeTrace} loading={loading} sessionId={sessionId} />
     </div>
   );
 
@@ -215,16 +215,16 @@ export default function ExecutionPane({
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <div className={styles.bubbleLeft}>
-                        {tr.agentCounter
-                          ? <strong>₹{tr.agentCounter.toLocaleString()}</strong>
+                        {tr.negotiate === true
+                          ? <strong>₹{tr.agentCounter?.toLocaleString()}</strong>
                           : <span style={{ fontStyle: 'italic', color: 'black' }}>Declined to counter.</span>}
                       </div>
 
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px', paddingLeft: '4px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                          {tr.langfuseTrace?.timestamp ? new Date(tr.langfuseTrace.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                          {tr.timestamp ? new Date(tr.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>
-                        {tr.langfuseTrace?.output?.rationale && (
+                        {tr.reasoning && (
                           <button
                             onClick={() => toggleReasoning(tr.traceId)}
                             style={{ background: 'none', border: 'none', color: 'var(--brand-agent)', fontSize: '11px', cursor: 'pointer', padding: 0 }}
@@ -234,9 +234,9 @@ export default function ExecutionPane({
                         )}
                       </div>
 
-                      {expandedReasonings[tr.traceId] && tr.langfuseTrace?.output?.rationale && (
+                      {expandedReasonings[tr.traceId] && tr.reasoning && (
                         <div style={{ marginTop: '8px', padding: '10px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5', maxWidth: '300px' }}>
-                          {tr.langfuseTrace.output.rationale}
+                          {tr.reasoning}
                         </div>
                       )}
                     </div>
