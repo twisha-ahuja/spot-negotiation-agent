@@ -181,7 +181,13 @@ export default function ExecutionPane({
         </div>
 
         <div className={styles.transcriptBody}>
-          {transcript.length === 0 ? (
+          {loading && transcript.length === 0 ? (
+            <div className={styles.transcriptEmpty} style={{ opacity: 0.7 }}>
+              <div className={styles.loaderSpinner} style={{ width: 24, height: 24, border: '2px solid var(--border-active)', borderTop: '2px solid var(--text-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+              <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+              <span className={styles.transcriptEmptyText}>Initializing Simulation Workspace...</span>
+            </div>
+          ) : transcript.length === 0 ? (
             <div className={styles.transcriptEmpty}>
               <svg width="24" height="24" fill="none" stroke="var(--border-active)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
               <span className={styles.transcriptEmptyText}>Compute rates first, then submit a bid.</span>
@@ -222,7 +228,7 @@ export default function ExecutionPane({
 
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px', paddingLeft: '4px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                          {tr.timestamp ? new Date(tr.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                          {tr.timestamp ? new Date(tr.timestamp.endsWith('Z') ? tr.timestamp : `${tr.timestamp}Z`).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>
                         {tr.reasoning && (
                           <button

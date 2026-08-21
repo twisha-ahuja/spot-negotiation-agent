@@ -99,7 +99,9 @@ export default function AgentTraceView({ activeTrace, loading: parentLoading, se
   const selectedData = selectedObsId === lf.id ? rootObs : observations.find(o => o.id === selectedObsId) || rootObs;
   const isRootSelected = selectedData.id === lf.id;
 
-  const formattedTime = lf.timestamp.replace('T', ' ').substring(0, 23);
+  const formattedTime = lf.timestamp
+    ? new Date(lf.timestamp.endsWith('Z') ? lf.timestamp : `${lf.timestamp}Z`).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'medium' })
+    : '';
 
   // Derive total tokens from the generation observation explicitly, if it exists in data
   const genObs = observations.find(o => o.type === 'GENERATION' && (o.usage || o.usageDetails));
@@ -202,7 +204,7 @@ export default function AgentTraceView({ activeTrace, loading: parentLoading, se
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {Object.entries(usageData)
-                        .filter(([k]) => k !== 'total' && k !== 'totalTokens')
+                        .filter(([k, v]) => k !== 'total' && k !== 'totalTokens' && !isNaN(v))
                         .map(([key, value]) => (
                           <div key={key} className={styles.usageRow}>
                             <span>{key}</span>

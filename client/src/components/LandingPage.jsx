@@ -73,7 +73,9 @@ export default function LandingPage({ onSelectMode }) {
               >
                 <div className={styles.histHeader}>
                   <span className={styles.histId}>{sim.truck_enquiry_id}</span>
-                  <span className={styles.histDate}>{new Date(sim.created_timestamp).toLocaleString()}</span>
+                  <span className={styles.histDate}>
+                    {sim.created_timestamp ? new Date(sim.created_timestamp.endsWith('Z') ? sim.created_timestamp : `${sim.created_timestamp}Z`).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) : 'Unknown'}
+                  </span>
                 </div>
                 <div className={styles.histLane}>
                   <div className={styles.histPoint}>

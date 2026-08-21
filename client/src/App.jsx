@@ -75,6 +75,7 @@ export default function App() {
     if (!sessionId) return;
 
     const fetchSpotDetails = async () => {
+      setLoading(true);
       try {
         const [res, traces] = await Promise.all([
           getPlaygroundSpotDetails(sessionId),
@@ -138,7 +139,6 @@ export default function App() {
               setPolling(true);
             } else {
               setPendingQuote(null);
-              setLoading(false);
               setPolling(false);
             }
           }
@@ -150,6 +150,10 @@ export default function App() {
         }
       } catch (err) {
         console.error("Failed to fetch spot details:", err);
+      } finally {
+        if (!polling) {
+          setLoading(false);
+        }
       }
     };
 
@@ -212,7 +216,7 @@ export default function App() {
       } catch (err) {
         console.error("Polling fetch failed", err);
       }
-    }, 40000);
+    }, 20000);
 
     return () => clearInterval(interval);
   }, [polling, sessionId, transcript.length, config.selectedTransporter, config.transporterName]);
