@@ -149,7 +149,11 @@ export default function ExecutionPane({
       </div>
 
       {/* Right Column: Trace Details */}
-      <AgentTraceView activeTrace={activeTrace} loading={loading} sessionId={sessionId} />
+      <AgentTraceView
+        activeTrace={activeTrace}
+        loading={loading}
+        sessionId={obsTransporterId ? `${sessionId}:${obsTransporterId}` : null}
+      />
     </div>
   );
 

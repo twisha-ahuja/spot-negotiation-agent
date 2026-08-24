@@ -56,6 +56,11 @@ export default function App() {
   const [spotDetails, setSpotDetails] = useState(null);
   const [pendingQuoteByTransporter, setPendingQuoteByTransporter] = useState({});
   const activeTabInitialized = React.useRef(false);
+  const pendingQuoteRef = React.useRef({});
+
+  useEffect(() => {
+    pendingQuoteRef.current = pendingQuoteByTransporter;
+  }, [pendingQuoteByTransporter]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -79,11 +84,7 @@ export default function App() {
     const fetchSpotDetails = async () => {
       setLoading(true);
       try {
-        const [res, traces] = await Promise.all([
-          getPlaygroundSpotDetails(sessionId),
-          getSessionTraces(sessionId).catch(() => [])
-        ]);
-        const sortedTraces = [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        const res = await getPlaygroundSpotDetails(sessionId);
         const docs = Array.isArray(res) ? res : (res?.docs || []);
         if (docs.length > 0) {
 
@@ -113,13 +114,25 @@ export default function App() {
             adhocId: spot.truck_enquiry_id || prev.adhocId
           }));
 
-          // Hydrate past Negotiation Chat logs for every selected transporter
+          // Hydrate past Negotiation Chat logs for every selected transporter - each transporter's
+          // Langfuse traces live under their own composite session id (truck_enquiry_id:transporter_id)
+          const tracesByTransporter = {};
+          await Promise.all((fetchedTransporterList || []).map(async t => {
+            try {
+              const traces = await getSessionTraces(`${sessionId}:${t.transporter_id}`);
+              tracesByTransporter[t.transporter_id] = [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            } catch {
+              tracesByTransporter[t.transporter_id] = [];
+            }
+          }));
+
           const nextTranscripts = {};
           const nextPending = {};
           (fetchedTransporterList || []).forEach(t => {
             const transDoc = docs.find(d => d.type === 'transporter_negotiation' && d.transporter_id === t.transporter_id);
             if (!transDoc) return;
 
+            const sortedTraces = tracesByTransporter[t.transporter_id] || [];
             nextTranscripts[t.transporter_id] = (transDoc.agent_logs || []).map(log => {
               const lfTrace = sortedTraces[log.round - 1];
               return {
@@ -183,11 +196,18 @@ export default function App() {
     const interval = setInterval(async () => {
       try {
         pollCount++;
-        const [res, traces] = await Promise.all([
+        const pendingIds = Object.keys(pendingQuoteRef.current);
+        const [res, tracesByTransporter] = await Promise.all([
           getPlaygroundSpotDetails(sessionId),
-          getSessionTraces(sessionId).catch(() => [])
+          Promise.all(pendingIds.map(async id => {
+            try {
+              const traces = await getSessionTraces(`${sessionId}:${id}`);
+              return [id, [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())];
+            } catch {
+              return [id, []];
+            }
+          })).then(Object.fromEntries)
         ]);
-        const sortedTraces = [...traces].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
         const docs = Array.isArray(res) ? res : (res?.docs || []);
 
         setPendingQuoteByTransporter(prevPending => {
@@ -200,6 +220,7 @@ export default function App() {
             // If pending_round is null/undefined, the backend agent has successfully concluded the cycle and committed logs natively.
             if (transDoc && !transDoc.pending_round && transDoc.agent_logs) {
               const logs = transDoc.agent_logs;
+              const sortedTraces = tracesByTransporter[transporterId] || [];
               setTranscriptsByTransporter(prevT => ({
                 ...prevT,
                 [transporterId]: logs.map(log => {
