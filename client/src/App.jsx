@@ -58,12 +58,23 @@ export default function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  const clearWorkspace = () => {
+    setConfig(EMPTY_CONFIG);
+    setTranscript([]);
+    setSpotDetails(null);
+    setComputedTarget(null);
+    setComputedFair(null);
+    setComputedWalkaway(null);
+    setPendingQuote(null);
+  };
+
   // Sync path routing natively via popstate
   useEffect(() => {
     const handlePopState = () => {
       const { mode, sId } = getPathParams();
       setAppMode(mode);
       setSessionId(sId);
+      if (mode === 'landing') clearWorkspace();
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -142,10 +153,11 @@ export default function App() {
           }
 
           // Update rates actively assigned only if they actually exist to prevent overwriting locally computed ones
-          if (spot.target_rate) {
-            setComputedTarget(spot.target_rate);
-            setComputedFair(spot.fair_rate || null);
-            setComputedWalkaway(spot.walkaway_rate || null);
+          const tRate = spot.target_rate || spot.suggested_target_rate;
+          if (tRate) {
+            setComputedTarget(tRate);
+            setComputedFair(spot.fair_rate || spot.suggested_fair_rate || null);
+            setComputedWalkaway(spot.walkaway_rate || spot.suggested_walkaway_rate || null);
           }
         }
       } catch (err) {
@@ -325,7 +337,11 @@ export default function App() {
     try {
       // Post actual pipeline request through the newly created async API cleanly
       const transporterId = config.selectedTransporter?.transporter_id || "UNKNOWN_ID";
-      await submitTransporterQuote(sessionId, transporterId, quoteInput);
+      const resp1 = await submitTransporterQuote(sessionId, transporterId, quoteInput);
+      if (resp1 === "Spot has been expired or deleted") {
+        setLoading(false);
+        return;
+      }
 
       // Immediately fetch once to pick up the pending_round document created by the backend
       const res = await getPlaygroundSpotDetails(sessionId);
@@ -339,6 +355,7 @@ export default function App() {
       setPolling(true); // Engages the asynchronous listener hook mapped above
     } catch (e) {
       console.error(e);
+      toast.error(e.message || "Failed to submit quote. Please try again.");
       setLoading(false);
       setPendingQuote(null);
     }
@@ -348,13 +365,7 @@ export default function App() {
     window.history.pushState({}, '', '/new');
     setAppMode('new');
     setSessionId(null);
-    setConfig(EMPTY_CONFIG);
-    setTranscript([]);
-    setSpotDetails(null);
-    setComputedTarget(null);
-    setComputedFair(null);
-    setComputedWalkaway(null);
-    setPendingQuote(null);
+    clearWorkspace();
   };
 
   if (appMode === 'landing') {
@@ -388,7 +399,7 @@ export default function App() {
         <div className={styles.navLeft}>
           <div className={styles.navBrand}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z" /><path d="M12 6a6 6 0 1 0 0 12 6 6 0 1 0 0-12z" /><path d="M12 10a2 2 0 1 0 0 4 2 2 0 1 0 0-4z" /></svg>
-            <h2>Spot Negotiation Playground</h2>
+            <h2 style={{ cursor: "pointer" }} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); clearWorkspace(); }}>Spot Negotiation Playground</h2>
           </div>
           <div className={styles.navTabs}>
             <div className={`${styles.navTab} ${activeTab === 'Live Console' ? styles.navTabActive : ''}`} onClick={() => setActiveTab('Live Console')}>Live Console</div>
@@ -397,7 +408,7 @@ export default function App() {
         </div>
 
         <div className={styles.navActions}>
-          <button className={styles.btnAction} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); }}>
+          <button className={styles.btnAction} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); clearWorkspace(); }}>
             Exit to Home
           </button>
           <button className={styles.themeToggle} onClick={toggleTheme}>
