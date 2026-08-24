@@ -10,6 +10,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
   const [allowedModels, setAllowedModels] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [transporterSearch, setTransporterSearch] = useState('');
 
   useEffect(() => {
     async function loadTemplate() {
@@ -148,19 +149,50 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
               </div>
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
-              <label>Select Transporter</label>
+              <label>Select Transporters</label>
               <AutoComplete
                 placeholder="Search transporter..."
-                value={config.selectedTransporter}
-                onChange={val => updateConfig("selectedTransporter", val)}
-                onSelect={suggestion => updateConfig("selectedTransporter", {
-                  transporter_id: suggestion.transporter_id,
-                  transporter_name: suggestion.transporter_name,
-                  isChecked: true
-                })}
+                value={transporterSearch}
+                onChange={val => setTransporterSearch(val)}
+                onSelect={suggestion => {
+                  const exists = (config.selectedTransporters || []).some(t => t.transporter_id === suggestion.transporter_id);
+                  if (!exists) {
+                    updateConfig("selectedTransporters", [
+                      ...(config.selectedTransporters || []),
+                      { transporter_id: suggestion.transporter_id, transporter_name: suggestion.transporter_name }
+                    ]);
+                  }
+                  setTransporterSearch('');
+                }}
                 localData={LSP_DATA}
                 disabled={hasSession}
               />
+              {(config.selectedTransporters || []).length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+                  {config.selectedTransporters.map(t => (
+                    <span
+                      key={t.transporter_id}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '6px',
+                        padding: '4px 8px', borderRadius: '999px', fontSize: '12px',
+                        background: 'var(--bg-surface)', border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)'
+                      }}
+                    >
+                      {t.transporter_name}
+                      {!hasSession && (
+                        <button
+                          type="button"
+                          onClick={() => updateConfig("selectedTransporters", config.selectedTransporters.filter(x => x.transporter_id !== t.transporter_id))}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: 0, fontSize: '13px', lineHeight: 1 }}
+                        >
+                          &times;
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Date of Placement</label>
@@ -335,7 +367,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
 
       <div className={styles.sidebarGroup} style={{ background: 'transparent', border: 'none', padding: 0 }}>
         {!hasSession ? (
-          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryHours))}>
+          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !(config.selectedTransporters?.length > 0) || !config.placementDate || !config.expiryHours))}>
             {loading ? 'Initializing...' : 'Run Scenario'}
           </button>
         ) : (

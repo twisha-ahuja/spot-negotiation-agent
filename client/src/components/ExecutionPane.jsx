@@ -4,10 +4,11 @@ import styles from '../styles/ExecutionPane.module.css';
 
 export default function ExecutionPane({
   sessionId, computedTarget, computedFair, computedWalkaway, computingRates, setComputedTarget, setComputedWalkaway,
-  onSetTargetRate, transcript, loading, handleBid, activeTab, spotDetails, pendingQuote
+  onSetTargetRate, transcriptsByTransporter, selectedTransporters, loading, handleBid, activeTab, spotDetails, pendingQuoteByTransporter
 }) {
   const [quoteInput, setQuoteInput] = useState('');
   const [activeTraceId, setActiveTraceId] = useState(null);
+  const [obsTransporterId, setObsTransporterId] = useState(null);
 
   // Local state for manual input before saving
   const [tempTarget, setTempTarget] = useState('');
@@ -19,15 +20,35 @@ export default function ExecutionPane({
     setExpandedReasonings(prev => ({ ...prev, [traceId]: !prev[traceId] }));
   };
 
-  // Auto-select newest trace
+  const isObservability = activeTab === 'Observability';
+  const activeTransporterId = isObservability ? null : activeTab;
+  const transcript = activeTransporterId ? (transcriptsByTransporter?.[activeTransporterId] || []) : [];
+  const pendingQuote = activeTransporterId ? (pendingQuoteByTransporter?.[activeTransporterId] ?? null) : null;
+  const activeTransporter = selectedTransporters?.find(t => t.transporter_id === activeTransporterId);
+
+  // Default the Observability transporter switcher to the currently active Live Console tab
   useEffect(() => {
-    if (transcript.length > 0) {
-      setActiveTraceId(transcript[transcript.length - 1].traceId);
+    if (!isObservability) return;
+    if (obsTransporterId && selectedTransporters?.some(t => t.transporter_id === obsTransporterId)) return;
+    const fallback = (activeTransporterId && selectedTransporters?.some(t => t.transporter_id === activeTransporterId))
+      ? activeTransporterId
+      : selectedTransporters?.[0]?.transporter_id || null;
+    setObsTransporterId(fallback);
+  }, [isObservability, activeTransporterId, selectedTransporters]);
+
+  const obsTranscript = obsTransporterId ? (transcriptsByTransporter?.[obsTransporterId] || []) : [];
+
+  // Auto-select newest trace within the transporter currently shown in Observability
+  useEffect(() => {
+    if (obsTranscript.length > 0) {
+      setActiveTraceId(obsTranscript[obsTranscript.length - 1].traceId);
+    } else {
+      setActiveTraceId(null);
     }
-  }, [transcript]);
+  }, [obsTranscript]);
 
   const onBidSubmit = () => {
-    handleBid(quoteInput);
+    handleBid(activeTransporterId, quoteInput);
     setQuoteInput('');
   };
 
@@ -42,7 +63,7 @@ export default function ExecutionPane({
     );
   }
 
-  const activeTrace = transcript.find(t => t.traceId === activeTraceId);
+  const activeTrace = obsTranscript.find(t => t.traceId === activeTraceId);
 
   const renderObservability = () => (
     <div className={styles.executionSplit}>
@@ -51,7 +72,7 @@ export default function ExecutionPane({
         <div className={styles.roundsHeader}>
           <div className={styles.roundsTitle}>
             <h3 className={styles.roundsTitleText}>Session Traces</h3>
-            <span className={styles.roundsCount}>{transcript.length} total</span>
+            <span className={styles.roundsCount}>{obsTranscript.length} total</span>
           </div>
 
           <div style={{ position: 'relative' }}>
@@ -66,8 +87,28 @@ export default function ExecutionPane({
           </div>
         </div>
 
+        {selectedTransporters?.length > 1 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '0 16px 12px' }}>
+            {selectedTransporters.map(t => (
+              <button
+                key={t.transporter_id}
+                onClick={() => setObsTransporterId(t.transporter_id)}
+                style={{
+                  padding: '4px 10px', borderRadius: '999px', fontSize: '11px', cursor: 'pointer',
+                  border: '1px solid var(--border-color)',
+                  background: obsTransporterId === t.transporter_id ? 'var(--brand-agent)' : 'var(--bg-surface)',
+                  color: obsTransporterId === t.transporter_id ? 'var(--brand-agent-text, #fff)' : 'var(--text-secondary)',
+                  fontWeight: obsTransporterId === t.transporter_id ? 600 : 400
+                }}
+              >
+                {t.transporter_name}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className={styles.roundsList}>
-          {transcript.map((tr, i) => {
+          {obsTranscript.map((tr, i) => {
             const isActive = activeTraceId === tr.traceId;
             return (
               <div
@@ -123,6 +164,7 @@ export default function ExecutionPane({
           </h2>
           <span className={styles.headerSubtitle}>
             {spotDetails ? `${spotDetails.truckType?.label || spotDetails.truckType || 'Truck Type'} • ${spotDetails.dateOfPlacement || spotDetails.placementDate || ''}` : 'Please configure the spot in the sidebar'}
+            {activeTransporter && ` • Negotiating with ${activeTransporter.transporter_name}`}
           </span>
         </div>
 
