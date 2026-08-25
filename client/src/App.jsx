@@ -373,7 +373,7 @@ export default function App() {
 
   const handleBid = async (transporterId, quoteInput) => {
     if (!sessionId || !transporterId) return;
-    setLoading(true);
+    setPendingQuoteByTransporter(prev => ({ ...prev, [transporterId]: Number(quoteInput) }));
     try {
       // Post actual pipeline request through the newly created async API cleanly
       await submitTransporterQuote(sessionId, transporterId, quoteInput);
@@ -390,7 +390,6 @@ export default function App() {
       setPolling(true); // Engages the asynchronous listener hook mapped above
     } catch (e) {
       console.error(e);
-      setLoading(false);
       setPendingQuoteByTransporter(prev => {
         const next = { ...prev };
         delete next[transporterId];

@@ -24,6 +24,7 @@ export default function ExecutionPane({
   const activeTransporterId = isObservability ? null : activeTab;
   const transcript = activeTransporterId ? (transcriptsByTransporter?.[activeTransporterId] || []) : [];
   const pendingQuote = activeTransporterId ? (pendingQuoteByTransporter?.[activeTransporterId] ?? null) : null;
+  const isQuotePending = pendingQuote !== null;
   const activeTransporter = selectedTransporters?.find(t => t.transporter_id === activeTransporterId);
 
   // Default the Observability transporter switcher to the currently active Live Console tab
@@ -298,11 +299,9 @@ export default function ExecutionPane({
             ))
           )}
 
-          {loading && pendingQuote && (
+          {isQuotePending && (
             <div className={styles.messageRight}>
-              <span className={styles.messageAuthorRight}>
-                You (Sending...)
-              </span>
+              <span className={styles.messageAuthorRight}>You</span>
               <div className={styles.messageBubbleRowRight}>
                 <div className={styles.avatarRight}>
                   <svg width="14" height="14" fill="none" stroke="var(--text-secondary)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -314,19 +313,6 @@ export default function ExecutionPane({
             </div>
           )}
 
-          {loading && pendingQuote && (
-            <div className={styles.messageLeft}>
-              <span className={styles.messageAuthorLeft}>Lorri AI Agent</span>
-              <div className={styles.messageBubbleRowLeft}>
-                <div className={styles.avatarLeft} style={{ opacity: 0.8 }}>
-                  <svg width="14" height="14" fill="none" stroke="var(--brand-agent-text)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                </div>
-                <div className={styles.pendingBubble}>
-                  Thinking ...
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Console Input Area (Attached to bottom of transcript box) */}
@@ -338,14 +324,14 @@ export default function ExecutionPane({
               value={quoteInput}
               onChange={e => setQuoteInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && quoteInput && computedTarget && onBidSubmit()}
-              disabled={loading || !computedTarget}
+              disabled={loading || isQuotePending || !computedTarget}
               className={styles.quoteInput}
             />
             <button
               onClick={onBidSubmit}
-              disabled={loading || !quoteInput || !computedTarget}
+              disabled={loading || isQuotePending || !quoteInput || !computedTarget}
               className={styles.submitButton}
-              style={{ cursor: (loading || !quoteInput || !computedTarget) ? 'not-allowed' : 'pointer', opacity: (loading || !quoteInput || !computedTarget) ? 0.6 : 1 }}
+              style={{ cursor: (loading || isQuotePending || !quoteInput || !computedTarget) ? 'not-allowed' : 'pointer', opacity: (loading || isQuotePending || !quoteInput || !computedTarget) ? 0.6 : 1 }}
             >
               Submit bid
               <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
