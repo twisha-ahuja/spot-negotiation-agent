@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AgentTraceView from './AgentTraceView';
 import styles from '../styles/ExecutionPane.module.css';
 
@@ -9,6 +9,7 @@ export default function ExecutionPane({
   const [quoteInput, setQuoteInput] = useState('');
   const [activeTraceId, setActiveTraceId] = useState(null);
   const [obsTransporterId, setObsTransporterId] = useState(null);
+  const transcriptBodyRef = useRef(null);
 
   // Local state for manual input before saving
   const [tempTarget, setTempTarget] = useState('');
@@ -47,6 +48,12 @@ export default function ExecutionPane({
       setActiveTraceId(null);
     }
   }, [obsTranscript]);
+
+  useEffect(() => {
+    if (isObservability) return;
+    if (!transcriptBodyRef.current) return;
+    transcriptBodyRef.current.scrollTop = transcriptBodyRef.current.scrollHeight;
+  }, [isObservability, activeTransporterId, transcript, isQuotePending]);
 
   const onBidSubmit = () => {
     handleBid(activeTransporterId, quoteInput);
@@ -227,7 +234,7 @@ export default function ExecutionPane({
           <span className={styles.transcriptHeaderText}>{transcript.length} ROUNDS</span>
         </div>
 
-        <div className={styles.transcriptBody}>
+        <div ref={transcriptBodyRef} className={styles.transcriptBody}>
           {loading && transcript.length === 0 ? (
             <div className={styles.transcriptEmpty} style={{ opacity: 0.7 }}>
               <div className={styles.loaderSpinner} style={{ width: 24, height: 24, border: '2px solid var(--border-active)', borderTop: '2px solid var(--text-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
