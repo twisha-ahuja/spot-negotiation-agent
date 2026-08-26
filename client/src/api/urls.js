@@ -1,5 +1,7 @@
 // Base URL configurations for API environments
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://preprod.lorri.in";
+// export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://preprod.lorri.in";
+export const BASE_URL = "https://staging.lorri.in";
+
 
 // Agent specific router base
 export const AGENT_API_BASE = `${BASE_URL}/api/agent`;
