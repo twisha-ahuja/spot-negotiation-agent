@@ -55,6 +55,12 @@ export default function ExecutionPane({
     transcriptBodyRef.current.scrollTop = transcriptBodyRef.current.scrollHeight;
   }, [isObservability, activeTransporterId, transcript, isQuotePending]);
 
+  useEffect(() => {
+    if (!sessionId) {
+      setTempTarget('');
+    }
+  }, [sessionId]);
+
   const onBidSubmit = () => {
     handleBid(activeTransporterId, quoteInput);
     setQuoteInput('');

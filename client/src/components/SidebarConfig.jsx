@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import AutoComplete from './Autocomplete';
 import LSP_DATA from './lsp.json';
+import RAW_TRUCKS from '../trucks.json';
 import { AUTOCOMPLETE_API } from '../api/urls';
-import { getPromptTemplate, getAllowedModels } from '../api/spotApi';
+
+// Hector trucks
+const TRUCKS_LIST = Array.from(new Set(RAW_TRUCKS.map(t => t.name).filter(Boolean)));
+
+import { createPromptVersion, getPromptTemplate, getAllowedModels, getPromptVersion, getPromptVersions } from '../api/spotApi';
 import styles from '../styles/SidebarConfig.module.css';
 
 export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, handleResetSession, loading, hasSession, sessionId, setSpotDetails }) {
@@ -11,6 +16,9 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [transporterSearch, setTransporterSearch] = useState('');
+  const [promptVersions, setPromptVersions] = useState([]);
+  const [versionName, setVersionName] = useState('');
+  const [versionLoading, setVersionLoading] = useState(false);
 
   useEffect(() => {
     async function loadTemplate() {
@@ -39,9 +47,65 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
       }
     }
 
+    async function loadVersions() {
+      try {
+        setPromptVersions(await getPromptVersions());
+      } catch (err) {
+        console.error("Failed to load prompt versions", err);
+      }
+    }
+
     loadModels();
     loadTemplate();
+    loadVersions();
   }, [hasSession, sessionId]);
+
+  const handleSelectVersion = async (versionId) => {
+    updateConfig("promptVersionId", versionId || null);
+    if (!versionId) {
+      updateConfig("agentPrompt", "");
+      return;
+    }
+
+    setVersionLoading(true);
+    try {
+      const version = await getPromptVersion(versionId);
+      if (Array.isArray(version.sections)) {
+        setPromptSections(version.sections);
+        setActiveTab(0);
+      }
+      updateConfig("agentPrompt", version.prompt || "");
+      if (version.model) updateConfig("model", version.model);
+    } catch (err) {
+      console.error("Failed to load prompt version", err);
+    } finally {
+      setVersionLoading(false);
+    }
+  };
+
+  const handleSaveVersion = async () => {
+    const name = versionName.trim();
+    if (!name || versionLoading) return;
+
+    setVersionLoading(true);
+    try {
+      const version = await createPromptVersion(
+        name,
+        config.model,
+        promptSections.filter(section => section.editable).map(section => ({
+          heading: section.heading,
+          content: section.content
+        }))
+      );
+      setPromptVersions(previous => [version, ...previous]);
+      setVersionName('');
+      await handleSelectVersion(version.id || version._id?.$oid || version._id);
+    } catch (err) {
+      console.error("Failed to save prompt version", err);
+    } finally {
+      setVersionLoading(false);
+    }
+  };
 
   const handleUpdateSection = (idx, newContent) => {
     const updated = [...promptSections];
@@ -129,24 +193,14 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Truck Type</label>
-              <div className={styles.selectWrapper}>
-                <select
-                  value={config.truckType?.value || ''}
-                  onChange={e => updateConfig("truckType", { label: e.target.value, value: e.target.value })}
-                  disabled={hasSession}
-                  style={{ width: '100%', appearance: 'none', paddingRight: '32px' }}
-                >
-                  <option value="18 MT MXL Container">18 MT MXL Container</option>
-                  <option value="12 WHEELER OPEN BODY TRUCK (20/21 MT)">12 WHEELER OPEN BODY TRUCK (20/21 MT)</option>
-                  <option value="Open Truck 9 MT">Open Truck 9 MT</option>
-                  <option value="32 FT MULTI AXLE CONTAINER (15 MT)">32 FT MULTI AXLE CONTAINER (15 MT)</option>
-                  <option value="20 MT MXL Container">20 MT MXL Container</option>
-                  <option value="24 MT MXL Container">24 MT MXL Container</option>
-                  <option value="32 FT SXL Container">32 FT SXL Container</option>
-                  <option value="32 FT MXL Container">32 FT MXL Container</option>
-                </select>
-                <svg className={styles.selectIcon} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
+              <AutoComplete
+                placeholder="Search truck type..."
+                value={config.truckType?.label || config.truckType}
+                onChange={val => updateConfig("truckType", { label: val, value: val })}
+                onSelect={val => updateConfig("truckType", { label: val, value: val })}
+                localData={TRUCKS_LIST}
+                disabled={hasSession}
+              />
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
               <label>Select Transporters</label>
@@ -270,6 +324,19 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             </div>
           </div>
           <div className={styles.formGroup}>
+            <label>Max Rounds per Transporter</label>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={config.maxRoundsPerTransporter}
+              onChange={e => updateConfig("maxRoundsPerTransporter", e.target.value)}
+              disabled={hasSession}
+              style={{ width: '100%' }}
+              placeholder="Default=10"
+            />
+          </div>
+          <div className={styles.formGroup}>
           </div>
           <div className={styles.formGroup}>
             <label>Agent Instruction Builder</label>
@@ -295,6 +362,38 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             borderRadius: '12px', border: '1px solid var(--border-color)',
             display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: 'var(--shadow)'
           }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', fontWeight: '600' }}>Prompt Version</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <select
+                  value={config.promptVersionId || ''}
+                  onChange={e => handleSelectVersion(e.target.value)}
+                  disabled={hasSession || versionLoading}
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <option value="">Draft prompt</option>
+                  {promptVersions.map(version => {
+                    const id = version.id || version._id?.$oid || version._id;
+                    return <option key={id} value={id}>{version.name}</option>;
+                  })}
+                </select>
+                <input
+                  value={versionName}
+                  onChange={e => setVersionName(e.target.value)}
+                  placeholder="Version name"
+                  disabled={hasSession || versionLoading}
+                  style={{ flex: 1, minWidth: 0 }}
+                />
+                <button
+                  className={styles.btnSecondary}
+                  onClick={handleSaveVersion}
+                  disabled={hasSession || versionLoading || !versionName.trim() || promptSections.length === 0}
+                  style={{ width: 'auto', whiteSpace: 'nowrap' }}
+                >
+                  Save Version
+                </button>
+              </div>
+            </div>
             {/* Header */}
             <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>Agent Instruction Overlay</h3>
@@ -367,7 +466,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
 
       <div className={styles.sidebarGroup} style={{ background: 'transparent', border: 'none', padding: 0 }}>
         {!hasSession ? (
-          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !(config.selectedTransporters?.length > 0) || !config.placementDate || !config.expiryHours))}>
+          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !(config.selectedTransporters?.length > 0) || !config.placementDate || !config.expiryHours || (config.maxRoundsPerTransporter !== "" && Number(config.maxRoundsPerTransporter) < 1)))}>
             {loading ? 'Initializing...' : 'Run Scenario'}
           </button>
         ) : (

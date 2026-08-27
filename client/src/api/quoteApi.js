@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { AGENT_API_BASE } from './urls';
 
 /**
@@ -30,6 +31,12 @@ export async function submitTransporterQuote(truckEnquiryId, transporterId, rate
 
     // Attempt to parse the response if it contains valid structured data, otherwise just return raw payload
     const textRes = await res.text();
+    console.log(textRes, "textRes")
+    if (textRes === "Spot has been expired or deleted" ||
+      textRes.includes("Spot has been expired or deleted")) {
+      toast.error("Spot has expired or been deleted")
+      return "Spot has been expired or deleted";
+    }
     try {
       return JSON.parse(textRes);
     } catch {
