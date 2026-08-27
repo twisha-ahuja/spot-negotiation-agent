@@ -292,6 +292,19 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             </div>
           </div>
           <div className={styles.formGroup}>
+            <label>Max Rounds per Transporter</label>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={config.maxRoundsPerTransporter}
+              onChange={e => updateConfig("maxRoundsPerTransporter", e.target.value)}
+              disabled={hasSession}
+              style={{ width: '100%' }}
+              placeholder="Default=10"
+            />
+          </div>
+          <div className={styles.formGroup}>
           </div>
           <div className={styles.formGroup}>
             <label>Agent Instruction Builder</label>
@@ -421,7 +434,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
 
       <div className={styles.sidebarGroup} style={{ background: 'transparent', border: 'none', padding: 0 }}>
         {!hasSession ? (
-          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryHours))}>
+          <button className={styles.btnPrimary} onClick={handleStartSession} disabled={loading || (appMode === 'existing' ? !config.adhocId : (!config.origin || !config.destination || !config.selectedTransporter || !config.placementDate || !config.expiryHours || (config.maxRoundsPerTransporter !== "" && Number(config.maxRoundsPerTransporter) < 1)))}>
             {loading ? 'Initializing...' : 'Run Scenario'}
           </button>
         ) : (

@@ -19,7 +19,8 @@ const EMPTY_CONFIG = {
   expiryHours: 24,
   company: null,
   model: "",
-  agentPrompt: ""
+  agentPrompt: "",
+  maxRoundsPerTransporter: ""
 };
 
 const getPathParams = () => {
@@ -251,7 +252,9 @@ export default function App() {
 
     let payload = {
       agent_enabled: true,
-      max_rounds_per_transporter: 10,
+      ...(config.maxRoundsPerTransporter !== "" && config.maxRoundsPerTransporter != null
+        ? { max_rounds_per_transporter: parseInt(config.maxRoundsPerTransporter, 10) }
+        : {}),
       model: config.model,
       prompt_version_id: config.promptVersionId || null,
       agent_prompt: config.agentPrompt || null,
