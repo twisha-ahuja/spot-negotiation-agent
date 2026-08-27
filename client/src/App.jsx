@@ -68,12 +68,12 @@ export default function App() {
 
   const clearWorkspace = () => {
     setConfig(EMPTY_CONFIG);
-    setTranscript([]);
+    setTranscriptsByTransporter({});
     setSpotDetails(null);
     setComputedTarget(null);
     setComputedFair(null);
     setComputedWalkaway(null);
-    setPendingQuote(null);
+    setPendingQuoteByTransporter({});
   };
 
   // Sync path routing natively via popstate
