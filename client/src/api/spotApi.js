@@ -193,6 +193,57 @@ export async function getPromptTemplate(truckEnquiryId = null) {
 }
 
 /**
+ * Creates an immutable named prompt version from the current prompt sections.
+ */
+export async function createPromptVersion(name, model, sections) {
+  const res = await fetch(`${AGENT_API_BASE}/spot/prompt_versions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, model: model || null, sections })
+  });
+
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail || `Failed to create prompt version: ${res.statusText}`);
+  }
+
+  return await res.json();
+}
+
+/**
+ * Lists immutable prompt versions available to the playground.
+ */
+export async function getPromptVersions() {
+  const res = await fetch(`${AGENT_API_BASE}/spot/prompt_versions`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch prompt versions: ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return data.prompt_versions || [];
+}
+
+/**
+ * Fetches the full immutable prompt version document.
+ */
+export async function getPromptVersion(versionId) {
+  const res = await fetch(`${AGENT_API_BASE}/spot/prompt_versions/${versionId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch prompt version: ${res.statusText}`);
+  }
+
+  return await res.json();
+}
+
+/**
  * Retrieves the exact list of agent LLM models allowed by the system configuration synchronously.
  */
 export async function getAllowedModels() {

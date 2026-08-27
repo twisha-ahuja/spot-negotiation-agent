@@ -115,6 +115,7 @@ export default function App() {
             company: { company_id: spot.company_id, domain: spot.domain, value: spot.domain },
             model: spot.playground_settings?.model || prev.model,
             agentPrompt: spot.playground_settings?.agent_prompt || prev.agentPrompt,
+            promptVersionId: spot.playground_settings?.prompt_version_id || spot.prompt_version_id || prev.promptVersionId,
             selectedTransporter: fetchedTransporterList?.[0] || prev.selectedTransporter,
             transporterName: fetchedTransporterList?.[0]?.transporter_name || prev.transporterName,
             adhocId: spot.truck_enquiry_id || prev.adhocId
@@ -252,7 +253,9 @@ export default function App() {
       agent_enabled: true,
       max_rounds_per_transporter: 10,
       model: config.model,
-      sections: config.promptSections?.length > 0 ? (config.promptSections || []).filter(s => s.editable).map(s => ({
+      prompt_version_id: config.promptVersionId || null,
+      agent_prompt: config.agentPrompt || null,
+      sections: !config.promptVersionId && config.promptSections?.length > 0 ? (config.promptSections || []).filter(s => s.editable).map(s => ({
         heading: s.heading,
         content: s.content
       })) : null,

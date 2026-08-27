@@ -7,7 +7,7 @@ import { AUTOCOMPLETE_API } from '../api/urls';
 // Hector trucks
 const TRUCKS_LIST = Array.from(new Set(RAW_TRUCKS.map(t => t.name).filter(Boolean)));
 
-import { getPromptTemplate, getAllowedModels } from '../api/spotApi';
+import { createPromptVersion, getPromptTemplate, getAllowedModels, getPromptVersion, getPromptVersions } from '../api/spotApi';
 import styles from '../styles/SidebarConfig.module.css';
 
 export default function SidebarConfig({ appMode, config, updateConfig, handleStartSession, handleResetSession, loading, hasSession, sessionId, setSpotDetails }) {
@@ -15,6 +15,9 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
   const [allowedModels, setAllowedModels] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [promptVersions, setPromptVersions] = useState([]);
+  const [versionName, setVersionName] = useState('');
+  const [versionLoading, setVersionLoading] = useState(false);
 
   useEffect(() => {
     async function loadTemplate() {
@@ -43,9 +46,65 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
       }
     }
 
+    async function loadVersions() {
+      try {
+        setPromptVersions(await getPromptVersions());
+      } catch (err) {
+        console.error("Failed to load prompt versions", err);
+      }
+    }
+
     loadModels();
     loadTemplate();
+    loadVersions();
   }, [hasSession, sessionId]);
+
+  const handleSelectVersion = async (versionId) => {
+    updateConfig("promptVersionId", versionId || null);
+    if (!versionId) {
+      updateConfig("agentPrompt", "");
+      return;
+    }
+
+    setVersionLoading(true);
+    try {
+      const version = await getPromptVersion(versionId);
+      if (Array.isArray(version.sections)) {
+        setPromptSections(version.sections);
+        setActiveTab(0);
+      }
+      updateConfig("agentPrompt", version.prompt || "");
+      if (version.model) updateConfig("model", version.model);
+    } catch (err) {
+      console.error("Failed to load prompt version", err);
+    } finally {
+      setVersionLoading(false);
+    }
+  };
+
+  const handleSaveVersion = async () => {
+    const name = versionName.trim();
+    if (!name || versionLoading) return;
+
+    setVersionLoading(true);
+    try {
+      const version = await createPromptVersion(
+        name,
+        config.model,
+        promptSections.filter(section => section.editable).map(section => ({
+          heading: section.heading,
+          content: section.content
+        }))
+      );
+      setPromptVersions(previous => [version, ...previous]);
+      setVersionName('');
+      await handleSelectVersion(version.id || version._id?.$oid || version._id);
+    } catch (err) {
+      console.error("Failed to save prompt version", err);
+    } finally {
+      setVersionLoading(false);
+    }
+  };
 
   const handleUpdateSection = (idx, newContent) => {
     const updated = [...promptSections];
@@ -258,6 +317,38 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
             borderRadius: '12px', border: '1px solid var(--border-color)',
             display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: 'var(--shadow)'
           }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', fontWeight: '600' }}>Prompt Version</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <select
+                  value={config.promptVersionId || ''}
+                  onChange={e => handleSelectVersion(e.target.value)}
+                  disabled={hasSession || versionLoading}
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <option value="">Draft prompt</option>
+                  {promptVersions.map(version => {
+                    const id = version.id || version._id?.$oid || version._id;
+                    return <option key={id} value={id}>{version.name}</option>;
+                  })}
+                </select>
+                <input
+                  value={versionName}
+                  onChange={e => setVersionName(e.target.value)}
+                  placeholder="Version name"
+                  disabled={hasSession || versionLoading}
+                  style={{ flex: 1, minWidth: 0 }}
+                />
+                <button
+                  className={styles.btnSecondary}
+                  onClick={handleSaveVersion}
+                  disabled={hasSession || versionLoading || !versionName.trim() || promptSections.length === 0}
+                  style={{ width: 'auto', whiteSpace: 'nowrap' }}
+                >
+                  Save Version
+                </button>
+              </div>
+            </div>
             {/* Header */}
             <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>Agent Instruction Overlay</h3>

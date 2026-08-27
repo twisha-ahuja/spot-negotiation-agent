@@ -26,6 +26,12 @@ export default function ExecutionPane({
     }
   }, [transcript]);
 
+  useEffect(() => {
+    if (!sessionId) {
+      setTempTarget('');
+    }
+  }, [sessionId]);
+
   const onBidSubmit = () => {
     handleBid(quoteInput);
     setQuoteInput('');
