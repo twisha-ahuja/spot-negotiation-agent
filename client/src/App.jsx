@@ -394,7 +394,6 @@ export default function App() {
     setPendingQuoteByTransporter(prev => ({ ...prev, [transporterId]: Number(quoteInput) }));
     try {
       // Post actual pipeline request through the newly created async API cleanly
-      const transporterId = config.selectedTransporter?.transporter_id || "UNKNOWN_ID";
       const resp1 = await submitTransporterQuote(sessionId, transporterId, quoteInput);
       if (resp1 === "Spot has been expired or deleted") {
         setLoading(false);
