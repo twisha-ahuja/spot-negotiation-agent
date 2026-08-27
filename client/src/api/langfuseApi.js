@@ -1,6 +1,6 @@
 export async function getSessionTraces(sessionId) {
-  const pk = import.meta.env.VITE_LANGFUSE_PUBLIC_KEY | "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96";
-  const sk = import.meta.env.VITE_LANGFUSE_SECRET_KEY | "sk-lf-c104fd1a-faaa-482a-8792-b71d45ddbaa9";
+  const pk = import.meta.env.VITE_LANGFUSE_PUBLIC_KEY || "pk-lf-90530cf7-b1fc-4d3c-a2a5-7779346afb96";
+  const sk = import.meta.env.VITE_LANGFUSE_SECRET_KEY || "sk-lf-c104fd1a-faaa-482a-8792-b71d45ddbaa9";
 
   if (!pk || !sk) {
     console.warn("Langfuse API keys missing in environment variables (.env). Please add VITE_LANGFUSE_PUBLIC_KEY and VITE_LANGFUSE_SECRET_KEY.");
