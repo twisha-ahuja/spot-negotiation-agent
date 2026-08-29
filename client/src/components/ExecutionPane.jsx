@@ -28,6 +28,15 @@ export default function ExecutionPane({
   const isQuotePending = pendingQuote !== null;
   const activeTransporter = selectedTransporters?.find(t => t.transporter_id === activeTransporterId);
 
+  // Real transporters can't raise a quote once submitted (the "no_bid_increment" company rule —
+  // see agent.md's "General Rules") — enforced UI-side there too, so mirror it in the playground
+  // rather than letting a test bid go up and produce a negotiation the agent would never see for
+  // real. Compares against this transporter's own last submitted quote, not the agent's counter.
+  const lastTransporterQuote = transcript.length > 0 ? transcript[transcript.length - 1].transporterQuote : null;
+  const quoteInputNumber = quoteInput === '' ? null : Number(quoteInput);
+  const quoteExceedsLastBid = lastTransporterQuote != null && quoteInputNumber != null && !isNaN(quoteInputNumber)
+    && quoteInputNumber > lastTransporterQuote;
+
   // Default the Observability transporter switcher to the currently active Live Console tab
   useEffect(() => {
     if (!isObservability) return;
@@ -62,6 +71,7 @@ export default function ExecutionPane({
   }, [sessionId]);
 
   const onBidSubmit = () => {
+    if (quoteExceedsLastBid) return;
     handleBid(activeTransporterId, quoteInput);
     setQuoteInput('');
   };
@@ -326,25 +336,52 @@ export default function ExecutionPane({
             </div>
           )}
 
+          {isQuotePending && (
+            <div className={styles.messageLeft}>
+              <span className={styles.messageAuthorLeft}>Lorri AI Agent</span>
+              <div className={styles.messageBubbleRowLeft}>
+                <div className={styles.avatarLeft}>
+                  <svg width="14" height="14" fill="none" stroke="var(--brand-agent-text)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <div className={styles.bubbleLeft} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '10px 14px' }}>
+                  <span className={styles.thinkingDot} style={{ animationDelay: '0ms' }}></span>
+                  <span className={styles.thinkingDot} style={{ animationDelay: '150ms' }}></span>
+                  <span className={styles.thinkingDot} style={{ animationDelay: '300ms' }}></span>
+                  <style>{`
+                    @keyframes thinkingBounce {
+                      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+                      30% { transform: translateY(-4px); opacity: 1; }
+                    }
+                  `}</style>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* Console Input Area (Attached to bottom of transcript box) */}
         <div className={styles.consoleInputArea}>
+          {quoteExceedsLastBid && (
+            <div style={{ fontSize: '12px', color: 'var(--brand-danger, #d64545)', padding: '0 2px 6px' }}>
+              A transporter can't raise their quote above their last bid (₹{lastTransporterQuote.toLocaleString()}).
+            </div>
+          )}
           <div className={styles.consoleInputRow}>
             <input
               type="number"
               placeholder={computedTarget ? "Transporter quote (₹)" : "Set target rate first..."}
               value={quoteInput}
               onChange={e => setQuoteInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && quoteInput && computedTarget && onBidSubmit()}
+              onKeyDown={e => e.key === "Enter" && quoteInput && computedTarget && !quoteExceedsLastBid && onBidSubmit()}
               disabled={loading || isQuotePending || !computedTarget}
               className={styles.quoteInput}
             />
             <button
               onClick={onBidSubmit}
-              disabled={loading || isQuotePending || !quoteInput || !computedTarget}
+              disabled={loading || isQuotePending || !quoteInput || !computedTarget || quoteExceedsLastBid}
               className={styles.submitButton}
-              style={{ cursor: (loading || isQuotePending || !quoteInput || !computedTarget) ? 'not-allowed' : 'pointer', opacity: (loading || isQuotePending || !quoteInput || !computedTarget) ? 0.6 : 1 }}
+              style={{ cursor: (loading || isQuotePending || !quoteInput || !computedTarget || quoteExceedsLastBid) ? 'not-allowed' : 'pointer', opacity: (loading || isQuotePending || !quoteInput || !computedTarget || quoteExceedsLastBid) ? 0.6 : 1 }}
             >
               Submit bid
               <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
