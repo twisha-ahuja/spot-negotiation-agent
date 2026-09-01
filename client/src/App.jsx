@@ -9,6 +9,25 @@ import ExecutionPane from "./components/ExecutionPane";
 import LandingPage from "./components/LandingPage";
 import { getSessionTraces } from "./api/langfuseApi";
 
+const LEGACY_MODEL_ALIASES = {
+  "claude-haiku-4-5": "claude-haiku-sdk",
+  "claude-haiku-4": "claude-haiku-sdk",
+  "claude-sonnet-4-5": "claude-sonnet-sdk",
+  "claude-sonnet-4": "claude-sonnet-sdk"
+};
+
+const normalizeModelSelection = (model, allowedModels = []) => {
+  if (!model) return allowedModels[0] || "";
+
+  const mapped = LEGACY_MODEL_ALIASES[model] || model;
+
+  if (allowedModels.length > 0) {
+    return allowedModels.includes(mapped) ? mapped : allowedModels[0];
+  }
+
+  return mapped;
+};
+
 const EMPTY_CONFIG = {
   transporterName: "",
   selectedTransporters: [],
@@ -20,6 +39,7 @@ const EMPTY_CONFIG = {
   expiryHours: 24,
   company: null,
   model: "",
+  allowedModels: [],
   agentPrompt: "",
   maxRoundsPerTransporter: ""
 };
@@ -297,12 +317,17 @@ export default function App() {
       return;
     }
 
+    const safeModel = normalizeModelSelection(config.model, config.allowedModels || []);
+    if (safeModel && config.model !== safeModel) {
+      updateConfig("model", safeModel);
+    }
+
     let payload = {
       agent_enabled: true,
       ...(config.maxRoundsPerTransporter !== "" && config.maxRoundsPerTransporter != null
         ? { max_rounds_per_transporter: parseInt(config.maxRoundsPerTransporter, 10) }
         : {}),
-      model: config.model,
+      model: safeModel,
       prompt_version_id: config.promptVersionId || null,
       agent_prompt: config.agentPrompt || null,
       sections: !config.promptVersionId

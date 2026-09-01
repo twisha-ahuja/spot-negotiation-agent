@@ -20,6 +20,24 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
   const [versionName, setVersionName] = useState('');
   const [versionLoading, setVersionLoading] = useState(false);
 
+  const normalizeModelSelection = (model, allowedModels = []) => {
+    const legacyAliases = {
+      'claude-haiku-4-5': 'claude-haiku-sdk',
+      'claude-haiku-4': 'claude-haiku-sdk',
+      'claude-sonnet-4-5': 'claude-sonnet-sdk',
+      'claude-sonnet-4': 'claude-sonnet-sdk'
+    };
+
+    if (!model) return allowedModels[0] || '';
+
+    const mapped = legacyAliases[model] || model;
+    if (allowedModels.length > 0) {
+      return allowedModels.includes(mapped) ? mapped : allowedModels[0];
+    }
+
+    return mapped;
+  };
+
   useEffect(() => {
     async function loadTemplate() {
       try {
@@ -38,8 +56,11 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
         const models = await getAllowedModels();
         if (models && models.length > 0) {
           setAllowedModels(models);
-          if (!models.includes(config.model)) {
-            updateConfig("model", models[0]);
+          updateConfig("allowedModels", models);
+
+          const normalizedModel = normalizeModelSelection(config.model, models);
+          if (normalizedModel !== config.model) {
+            updateConfig("model", normalizedModel);
           }
         }
       } catch (err) {
@@ -75,7 +96,10 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
         setActiveTab(0);
       }
       updateConfig("agentPrompt", version.prompt || "");
-      if (version.model) updateConfig("model", version.model);
+      if (version.model) {
+        const normalizedModel = normalizeModelSelection(version.model, allowedModels);
+        updateConfig("model", normalizedModel);
+      }
     } catch (err) {
       console.error("Failed to load prompt version", err);
     } finally {
