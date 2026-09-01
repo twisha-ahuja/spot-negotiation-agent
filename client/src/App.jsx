@@ -305,10 +305,12 @@ export default function App() {
       model: config.model,
       prompt_version_id: config.promptVersionId || null,
       agent_prompt: config.agentPrompt || null,
-      sections: !config.promptVersionId && config.promptSections?.length > 0 ? (config.promptSections || []).filter(s => s.editable).map(s => ({
-        heading: s.heading,
-        content: s.content
-      })) : null,
+      sections: !config.promptVersionId
+        ? (config.promptSections || []).filter(s => s.editable).map(s => ({
+            heading: s.heading,
+            content: s.content
+          }))
+        : [],
       lane_details: {
         origin: config.origin || {},
         destination: config.destination || {},
