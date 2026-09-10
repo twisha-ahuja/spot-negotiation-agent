@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import styles from "./styles/App.module.css";
-import { createPlaygroundSpot, getPlaygroundSpotDetails, setTargetRate, getCalculatedRates } from "./api/spotApi";
+import { createPlaygroundSpot, configurePlaygroundSpot, getPlaygroundSpotDetails, setTargetRate, getCalculatedRates } from "./api/spotApi";
 import { submitTransporterQuote } from "./api/quoteApi";
 import { Toaster, toast } from 'react-hot-toast';
 import SidebarConfig from "./components/SidebarConfig";
@@ -40,6 +40,7 @@ const EMPTY_CONFIG = {
   company: null,
   model: "",
   allowedModels: [],
+  negotiationMode: "get_me_a_truck",
   agentPrompt: "",
   maxRoundsPerTransporter: ""
 };
@@ -137,7 +138,8 @@ export default function App() {
             placementDate: spot.lane_details?.dop || spot.lane_details?.placementDate || prev.placementDate,
             expiryTimestamp: spot.lane_details?.expiry_date ? new Date(spot.lane_details.expiry_date).toISOString().slice(0, 16) : prev.expiryTimestamp,
             company: { company_id: spot.company_id, domain: spot.domain, value: spot.domain },
-            model: spot.playground_settings?.model || prev.model,
+            model: spot.playground_settings?.agent_model || spot.playground_settings?.model || prev.model,
+            negotiationMode: spot.playground_settings?.negotiation_mode || prev.negotiationMode,
             agentPrompt: spot.playground_settings?.agent_prompt || prev.agentPrompt,
             promptVersionId: spot.playground_settings?.prompt_version_id || spot.prompt_version_id || prev.promptVersionId,
             selectedTransporters: fetchedTransporterList?.length > 0 ? fetchedTransporterList : prev.selectedTransporters,
@@ -166,14 +168,17 @@ export default function App() {
             const sortedTraces = tracesByTransporter[t.transporter_id] || [];
             nextTranscripts[t.transporter_id] = (transDoc.agent_logs || []).map(log => {
               const lfTrace = sortedTraces[log.round - 1];
+              const transporterQuote = log.transporter_rate ?? log.rate ?? null;
+              const agentCounter = log.counter_offer_rate ?? null;
+              const negotiate = typeof log.negotiate === 'boolean' ? log.negotiate : (agentCounter != null);
               return {
                 round: log.round,
                 traceId: transDoc._id?.$oid || "trace_" + log.round,
                 transporterName: t.transporter_name || 'Transporter',
-                transporterQuote: log.transporter_rate,
-                agentCounter: log.counter_offer_rate,
-                negotiate: log.negotiate,
-                status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
+                transporterQuote,
+                agentCounter,
+                negotiate,
+                status: negotiate ? "Negotiating" : (agentCounter != null ? "Accepted" : "Rejected"),
                 latency: lfTrace?.latency ? `${lfTrace.latency.toFixed(1)}s` : (log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-'),
                 tokens: log.usage?.output_tokens || '-',
                 cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
@@ -243,6 +248,25 @@ export default function App() {
           })).then(Object.fromEntries)
         ]);
         const docs = Array.isArray(res) ? res : (res?.docs || []);
+        const latestSpot = docs.find(d => d?.type === 'enquiry_agent_settings') || docs[0];
+
+        if (latestSpot) {
+          setSpotDetails(prev => ({
+            ...prev,
+            origin: latestSpot.lane_details?.origin || prev?.origin,
+            destination: latestSpot.lane_details?.destination || prev?.destination,
+            truckType: latestSpot.lane_details?.truck_type?.label || latestSpot.lane_details?.truck_type || prev?.truckType,
+            dateOfPlacement: latestSpot.lane_details?.dop || latestSpot.lane_details?.placementDate || prev?.dateOfPlacement,
+          }));
+
+          const latestTarget = latestSpot.target_rate ?? latestSpot.suggested_target_rate;
+          const latestFair = latestSpot.fair_rate ?? latestSpot.suggested_fair_rate;
+          const latestWalkaway = latestSpot.walkaway_rate ?? latestSpot.suggested_walkaway_rate;
+
+          if (latestTarget != null) { setComputedTarget(latestTarget); }
+          if (latestFair != null) { setComputedFair(latestFair); }
+          if (latestWalkaway != null) { setComputedWalkaway(latestWalkaway); }
+        }
 
         setPendingQuoteByTransporter(prevPending => {
           const remainingPending = { ...prevPending };
@@ -255,26 +279,33 @@ export default function App() {
             if (transDoc && !transDoc.pending_round && transDoc.agent_logs) {
               const logs = transDoc.agent_logs;
               const sortedTraces = tracesByTransporter[transporterId] || [];
-              setTranscriptsByTransporter(prevT => ({
-                ...prevT,
-                [transporterId]: logs.map(log => {
-                  const lfTrace = sortedTraces[log.round - 1];
-                  return {
-                    round: log.round,
-                    traceId: transDoc._id?.$oid || "trace_" + log.round,
-                    transporterName: transporterMeta?.transporter_name || 'Transporter',
-                    transporterQuote: log.transporter_rate,
-                    agentCounter: log.counter_offer_rate,
-                    negotiate: log.negotiate,
-                    status: log.negotiate ? "Negotiating" : (log.counter_offer_rate ? "Accepted" : "Rejected"),
-                    latency: lfTrace?.latency ? `${lfTrace.latency.toFixed(1)}s` : (log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-'),
-                    tokens: log.usage?.output_tokens || '-',
-                    cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
-                    timestamp: log.timestamp?.$date || log.timestamp || new Date().toISOString(),
-                    reasoning: log.reasoning || ""
-                  };
-                })
-              }));
+              setTranscriptsByTransporter(prevT => {
+                const previousEntries = prevT[transporterId] || [];
+                return {
+                  ...prevT,
+                  [transporterId]: logs.map((log, index) => {
+                    const lfTrace = sortedTraces[log.round - 1];
+                    const previousEntry = previousEntries.find(entry => entry.round === log.round) || previousEntries[index] || previousEntries[previousEntries.length - 1];
+                    const transporterQuote = log.transporter_rate ?? log.rate ?? previousEntry?.transporterQuote ?? null;
+                    const agentCounter = log.counter_offer_rate ?? previousEntry?.agentCounter ?? null;
+                    const negotiate = typeof log.negotiate === 'boolean' ? log.negotiate : (agentCounter != null);
+                    return {
+                      round: log.round,
+                      traceId: transDoc._id?.$oid || "trace_" + log.round,
+                      transporterName: transporterMeta?.transporter_name || 'Transporter',
+                      transporterQuote,
+                      agentCounter,
+                      negotiate,
+                      status: negotiate ? "Negotiating" : (agentCounter != null ? "Accepted" : "Rejected"),
+                      latency: lfTrace?.latency ? `${lfTrace.latency.toFixed(1)}s` : (log.usage?.duration_api_ms ? (log.usage.duration_api_ms / 1000).toFixed(1) + 's' : '-'),
+                      tokens: log.usage?.output_tokens || '-',
+                      cost: log.usage?.total_cost_usd ? "$" + log.usage.total_cost_usd.toFixed(4) : '-',
+                      timestamp: log.timestamp?.$date || log.timestamp || new Date().toISOString(),
+                      reasoning: log.reasoning || ""
+                    };
+                  })
+                };
+              });
               delete remainingPending[transporterId];
             } else if (!transDoc || !transDoc.pending_round) {
               // If quoting genuinely hasn't started or dropped off natively without generating logs, shut down polling for it.
@@ -328,6 +359,7 @@ export default function App() {
         ? { max_rounds_per_transporter: parseInt(config.maxRoundsPerTransporter, 10) }
         : {}),
       model: safeModel,
+      negotiation_mode: config.negotiationMode,
       prompt_version_id: config.promptVersionId || null,
       agent_prompt: config.agentPrompt || null,
       sections: !config.promptVersionId
@@ -355,6 +387,18 @@ export default function App() {
       const domain = config.company?.domain || "";
       console.log(payload, companyId, domain, "HELLO");
       const res = await createPlaygroundSpot(payload, companyId, domain);
+
+      await configurePlaygroundSpot(
+        res.truck_enquiry_id,
+        safeModel,
+        config.negotiationMode,
+        !config.promptVersionId
+          ? (config.promptSections || []).filter(s => s.editable).map(s => ({
+              heading: s.heading,
+              content: s.content
+            }))
+          : []
+      );
 
       toast.success("Spot created successfully!");
 
@@ -487,17 +531,43 @@ export default function App() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z" /><path d="M12 6a6 6 0 1 0 0 12 6 6 0 1 0 0-12z" /><path d="M12 10a2 2 0 1 0 0 4 2 2 0 1 0 0-4z" /></svg>
             <h2 style={{ cursor: "pointer" }} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); clearWorkspace(); }}>Spot Negotiation Playground</h2>
           </div>
-          <div className={styles.navTabs}>
-            {(config.selectedTransporters || []).map(t => (
-              <div
-                key={t.transporter_id}
-                className={`${styles.navTab} ${activeTab === t.transporter_id ? styles.navTabActive : ''}`}
-                onClick={() => setActiveTab(t.transporter_id)}
+          <div
+            className={styles.navTabs}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <div
+              className={`${styles.navTab} ${activeTab === 'Observability' ? styles.navTabActive : ''}`}
+              onClick={() => setActiveTab('Observability')}
+              style={{
+                padding: '6px 10px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Observability
+            </div>
+            {(config.selectedTransporters || []).map(transporter => (
+              <button
+                key={transporter.transporter_id}
+                type="button"
+                className={`${styles.navTab} ${activeTab === transporter.transporter_id ? styles.navTabActive : ''}`}
+                onClick={() => setActiveTab(transporter.transporter_id)}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  whiteSpace: 'nowrap'
+                }}
+                title={`View ${transporter.transporter_name}'s negotiation script`}
               >
-                {t.transporter_name}
-              </div>
+                {transporter.transporter_name}
+              </button>
             ))}
-            <div className={`${styles.navTab} ${activeTab === 'Observability' ? styles.navTabActive : ''}`} onClick={() => setActiveTab('Observability')}>Observability</div>
           </div>
         </div>
 
@@ -535,6 +605,7 @@ export default function App() {
           loading={loading}
           handleBid={handleBid}
           activeTab={activeTab}
+          setActiveTab={setActiveTab}
           spotDetails={spotDetails}
           pendingQuoteByTransporter={pendingQuoteByTransporter}
         />

@@ -4,7 +4,7 @@ import styles from '../styles/ExecutionPane.module.css';
 
 export default function ExecutionPane({
   sessionId, computedTarget, computedFair, computedWalkaway, computingRates, setComputedTarget, setComputedWalkaway,
-  onSetTargetRate, transcriptsByTransporter, selectedTransporters, loading, handleBid, activeTab, spotDetails, pendingQuoteByTransporter
+  onSetTargetRate, transcriptsByTransporter, selectedTransporters, loading, handleBid, activeTab, setActiveTab, spotDetails, pendingQuoteByTransporter
 }) {
   const [quoteInput, setQuoteInput] = useState('');
   const [activeTraceId, setActiveTraceId] = useState(null);
@@ -16,9 +16,38 @@ export default function ExecutionPane({
 
   // Local state for toggling rationale visibility
   const [expandedReasonings, setExpandedReasonings] = useState({});
+  const [transporterQuoteInputs, setTransporterQuoteInputs] = useState({});
 
   const toggleReasoning = (traceId) => {
     setExpandedReasonings(prev => ({ ...prev, [traceId]: !prev[traceId] }));
+  };
+
+  const formatMoney = (value) => {
+    if (value === null || value === undefined || value === '') return '-';
+    const numeric = Number(value);
+    if (Number.isNaN(numeric)) return '-';
+    return `₹${numeric.toLocaleString()}`;
+  };
+
+  const getLastTransporterQuote = (transporterId) => {
+    const transporterHistory = transcriptsByTransporter?.[transporterId] || [];
+    return transporterHistory.length > 0 ? transporterHistory[transporterHistory.length - 1].transporterQuote : null;
+  };
+
+  const onTransporterQuoteInputChange = (transporterId, value) => {
+    setTransporterQuoteInputs(prev => ({ ...prev, [transporterId]: value }));
+  };
+
+  const submitQuoteForTransporter = (transporterId) => {
+    const nextQuote = transporterQuoteInputs[transporterId] ?? '';
+    if (!nextQuote || Number(nextQuote) <= 0) return;
+    handleBid(transporterId, nextQuote);
+    setTransporterQuoteInputs(prev => ({ ...prev, [transporterId]: '' }));
+  };
+
+  const selectTransporter = (transporterId) => {
+    setActiveTab(transporterId);
+    setQuoteInput('');
   };
 
   const isObservability = activeTab === 'Observability';
@@ -142,7 +171,7 @@ export default function ExecutionPane({
               >
                 <div className={styles.roundCardHeader}>
                   <div className={`${styles.roundCardTitle} ${isActive ? styles.active : styles.inactive}`}>
-                    Round {tr.round}: ₹{tr.transporterQuote}
+                    Round {tr.round}: {formatMoney(tr.transporterQuote)}
                   </div>
                   <span className={`${styles.roundCardStatus} ${tr.status === 'Accepted' ? styles.accepted : styles.ongoing}`}>
                     {tr.status?.toLowerCase() || 'unknown'}
@@ -243,10 +272,131 @@ export default function ExecutionPane({
         </div>
       </div>
 
+      {selectedTransporters?.length > 0 && (
+        <div style={{ marginBottom: '16px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--bg-surface)', overflow: 'hidden' }}>
+          <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-panel)', fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 700 }}>
+            Transporter Quote Board
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '8px', padding: '10px' }}>
+            {selectedTransporters.map((transport) => {
+              const transporterId = transport.transporter_id;
+              const currentInput = transporterQuoteInputs[transporterId] ?? '';
+              const lastQuote = getLastTransporterQuote(transporterId);
+              const pending = pendingQuoteByTransporter?.[transporterId] != null;
+              const statusTone = pending ? 'var(--status-warn)' : (lastQuote != null ? 'var(--status-ok)' : 'var(--text-tertiary)');
+              const quoteExceeds = lastQuote != null && currentInput !== '' && Number(currentInput) > Number(lastQuote);
+              const canSubmit = !!computedTarget && !!currentInput && Number(currentInput) > 0 && !pending && !quoteExceeds && !loading;
+
+              return (
+                <div
+                  key={transporterId}
+                  onClick={() => selectTransporter(transporterId)}
+                  onFocus={() => selectTransporter(transporterId)}
+                  onMouseDown={() => selectTransporter(transporterId)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      selectTransporter(transporterId);
+                    }
+                  }}
+                  style={{
+                    border: activeTransporterId === transporterId ? '1px solid var(--brand-agent)' : '1px solid var(--border-color)',
+                    borderRadius: '10px',
+                    background: activeTransporterId === transporterId ? 'rgba(245, 158, 11, 0.04)' : 'var(--bg-panel)',
+                    padding: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  <div
+                    onClick={() => selectTransporter(transporterId)}
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                  >
+                    <strong style={{ fontSize: '12px', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{transport.transporter_name}</strong>
+                    <span
+                      style={{
+                        fontSize: '9px',
+                        color: statusTone,
+                        border: '1px solid currentColor',
+                        borderRadius: '999px',
+                        padding: '2px 6px',
+                        lineHeight: 1.2,
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {pending ? 'Pending' : (lastQuote != null ? 'Live' : 'New')}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                    <span>Last</span>
+                    <strong style={{ color: 'var(--text-primary)' }}>{lastQuote != null ? formatMoney(lastQuote) : '—'}</strong>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <input
+                      type="number"
+                      value={currentInput}
+                      onFocus={() => selectTransporter(transporterId)}
+                      onClick={() => selectTransporter(transporterId)}
+                      onChange={e => onTransporterQuoteInputChange(transporterId, e.target.value)}
+                      placeholder="Quote"
+                      disabled={loading || pending || !computedTarget}
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        padding: '7px 8px',
+                        fontSize: '12px'
+                      }}
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        submitQuoteForTransporter(transporterId);
+                      }}
+                      disabled={!canSubmit}
+                      style={{
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: canSubmit ? 'var(--brand-agent)' : 'var(--bg-muted)',
+                        color: canSubmit ? 'var(--brand-agent-text, #fff)' : 'var(--text-tertiary)',
+                        padding: '7px 10px',
+                        fontSize: '11px',
+                        cursor: canSubmit ? 'pointer' : 'not-allowed',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Submit
+                    </button>
+                  </div>
+
+                  {quoteExceeds && (
+                    <div style={{ fontSize: '10px', color: 'var(--brand-danger, #d64545)' }}>
+                      Above last bid.
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Negotiation Transcript Panel */}
       <div className={styles.transcriptPanel}>
         <div className={styles.transcriptHeader}>
-          <span className={styles.transcriptHeaderText}>NEGOTIATION TRANSCRIPT</span>
+          <span className={styles.transcriptHeaderText}>
+            {activeTransporter ? `${activeTransporter.transporter_name} NEGOTIATION SCRIPT` : 'NEGOTIATION SCRIPT'}
+          </span>
           <span className={styles.transcriptHeaderText}>{transcript.length} ROUNDS</span>
         </div>
 
@@ -275,7 +425,7 @@ export default function ExecutionPane({
                       <svg width="14" height="14" fill="none" stroke="var(--text-secondary)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     </div>
                     <div className={styles.bubbleRight}>
-                      <strong>₹{tr.transporterQuote.toLocaleString()}</strong>
+                      <strong>{formatMoney(tr.transporterQuote)}</strong>
                     </div>
                   </div>
                 </div>
@@ -292,7 +442,7 @@ export default function ExecutionPane({
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <div className={styles.bubbleLeft}>
                         {tr.negotiate === true
-                          ? <strong>₹{tr.agentCounter?.toLocaleString()}</strong>
+                          ? <strong>{tr.agentCounter != null ? formatMoney(tr.agentCounter) : '—'}</strong>
                           : <span style={{ fontStyle: 'italic', color: 'black' }}>Declined to counter.</span>}
                       </div>
 
@@ -330,7 +480,7 @@ export default function ExecutionPane({
                   <svg width="14" height="14" fill="none" stroke="var(--text-secondary)" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </div>
                 <div className={styles.bubbleRight}>
-                  <strong>₹{Number(pendingQuote).toLocaleString()}</strong>
+                  <strong>{formatMoney(pendingQuote)}</strong>
                 </div>
               </div>
             </div>
@@ -364,7 +514,7 @@ export default function ExecutionPane({
         <div className={styles.consoleInputArea}>
           {quoteExceedsLastBid && (
             <div style={{ fontSize: '12px', color: 'var(--brand-danger, #d64545)', padding: '0 2px 6px' }}>
-              A transporter can't raise their quote above their last bid (₹{lastTransporterQuote.toLocaleString()}).
+              A transporter can't raise their quote above their last bid ({formatMoney(lastTransporterQuote)}).
             </div>
           )}
           <div className={styles.consoleInputRow}>

@@ -37,25 +37,31 @@
 
 .navTabs {
   display: flex;
-  gap: 24px;
-  height: 52px;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 28px;
   align-items: center;
+  overflow: hidden;
 }
 
 .navTab {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--text-secondary);
   cursor: pointer;
-  height: 100%;
   display: flex;
   align-items: center;
-  border-bottom: 2px solid transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 6px 10px;
   font-weight: 500;
+  line-height: 1;
+  background: transparent;
 }
 
 .navTabActive {
   color: var(--text-primary);
-  border-bottom-color: var(--status-warn);
+  border-color: var(--status-warn);
+  background: rgba(245, 158, 11, 0.08);
 }
 
 .navActions {

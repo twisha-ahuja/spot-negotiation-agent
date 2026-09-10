@@ -25,6 +25,28 @@ export async function createPlaygroundSpot(payload, companyId, domain) {
 }
 
 /**
+ * Applies the per-spot model, prompt section overlay, and negotiation mode.
+ */
+export async function configurePlaygroundSpot(truckEnquiryId, model, negotiationMode, sections = []) {
+  const res = await fetch(`${AGENT_API_BASE}/spot/${truckEnquiryId}/configure`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model,
+      negotiation_mode: negotiationMode,
+      sections
+    })
+  });
+
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail || `Failed to configure spot: ${res.statusText}`);
+  }
+
+  return await res.json();
+}
+
+/**
  * Fetches the global list of previously initialized AI spot simulations directly handling history.
  */
 export async function getSimulations() {
