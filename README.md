@@ -1,4 +1,4 @@
-# Freight negotiation POC
+# Freight negotiation POC 
 
 A human plays the transporter and negotiates a freight rate, in chat, against
 an AI procurement agent (Claude, GPT, or Gemini - swappable per session). The
