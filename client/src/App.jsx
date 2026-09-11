@@ -75,6 +75,10 @@ export default function App() {
   const [transcriptsByTransporter, setTranscriptsByTransporter] = useState({});
   const [spotDetails, setSpotDetails] = useState(null);
   const [pendingQuoteByTransporter, setPendingQuoteByTransporter] = useState({});
+  // Cold-lane-only, read-only info surfaced in ExecutionPane — null for a hot-lane playground
+  // spot (no `cold_lane` subdoc), so the panel there simply doesn't render.
+  const [coldLaneInfo, setColdLaneInfo] = useState(null);
+  const [expiryDate, setExpiryDate] = useState(null);
   const activeTabInitialized = React.useRef(false);
   const pendingQuoteRef = React.useRef({});
 
@@ -95,6 +99,8 @@ export default function App() {
     setComputedFair(null);
     setComputedWalkaway(null);
     setPendingQuoteByTransporter({});
+    setColdLaneInfo(null);
+    setExpiryDate(null);
   };
 
   // Sync path routing natively via popstate
@@ -127,6 +133,19 @@ export default function App() {
             truckType: spot.lane_details?.truck_type?.label || spot.lane_details?.truck_type,
             dateOfPlacement: spot.lane_details?.dop || spot.lane_details?.placementDate,
           });
+
+          setExpiryDate(spot.lane_details?.expiry_date || null);
+
+          // cold_lane subdoc only exists once a spot's been picked up by the cold-lane
+          // deterministic agent — read-only display, no write-back from here.
+          setColdLaneInfo(spot.cold_lane ? {
+            negotiationMode: spot.negotiation_mode || 'get_me_a_truck',
+            rankVisible: !!spot.cold_lane.rank_visible,
+            maxRoundsPerTransporter: spot.max_rounds_per_transporter,
+            model: spot.playground_settings?.agent_model || spot.playground_settings?.model || null,
+            openingAnchorRate: spot.cold_lane.opening_anchor_rate ?? null,
+            rollingAnchorRate: spot.cold_lane.rolling_anchor_rate ?? null,
+          } : null);
 
           // Auto-populate Config values exactly as fetched from API
           const fetchedTransporterList = spot.lane_details?.benchmark_transporter_list;
@@ -266,6 +285,17 @@ export default function App() {
           if (latestTarget != null) { setComputedTarget(latestTarget); }
           if (latestFair != null) { setComputedFair(latestFair); }
           if (latestWalkaway != null) { setComputedWalkaway(latestWalkaway); }
+
+          // Rolling/opening anchor move as the sweep evaluates the lane, so keep this in sync
+          // on the same poll rather than only reading it once at load.
+          setColdLaneInfo(latestSpot.cold_lane ? {
+            negotiationMode: latestSpot.negotiation_mode || 'get_me_a_truck',
+            rankVisible: !!latestSpot.cold_lane.rank_visible,
+            maxRoundsPerTransporter: latestSpot.max_rounds_per_transporter,
+            model: latestSpot.playground_settings?.agent_model || latestSpot.playground_settings?.model || null,
+            openingAnchorRate: latestSpot.cold_lane.opening_anchor_rate ?? null,
+            rollingAnchorRate: latestSpot.cold_lane.rolling_anchor_rate ?? null,
+          } : null);
         }
 
         setPendingQuoteByTransporter(prevPending => {
@@ -608,6 +638,8 @@ export default function App() {
           setActiveTab={setActiveTab}
           spotDetails={spotDetails}
           pendingQuoteByTransporter={pendingQuoteByTransporter}
+          coldLaneInfo={coldLaneInfo}
+          expiryDate={expiryDate}
         />
       </div>
     </div>

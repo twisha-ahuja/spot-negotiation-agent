@@ -4,8 +4,14 @@ import styles from '../styles/ExecutionPane.module.css';
 
 export default function ExecutionPane({
   sessionId, computedTarget, computedFair, computedWalkaway, computingRates, setComputedTarget, setComputedWalkaway,
-  onSetTargetRate, transcriptsByTransporter, selectedTransporters, loading, handleBid, activeTab, setActiveTab, spotDetails, pendingQuoteByTransporter
+  onSetTargetRate, transcriptsByTransporter, selectedTransporters, loading, handleBid, activeTab, setActiveTab, spotDetails, pendingQuoteByTransporter,
+  coldLaneInfo, expiryDate
 }) {
+  // Cold lane doesn't need a target rate to run right now (the deterministic agent's own
+  // discovery/momentum bounds don't read it) — only cold-lane spots skip the "set target rate
+  // first" gate below; hot-lane playground runs keep the existing required-target-rate behavior.
+  const isColdLane = !!coldLaneInfo;
+  const canQuote = !!computedTarget || isColdLane;
   const [quoteInput, setQuoteInput] = useState('');
   const [activeTraceId, setActiveTraceId] = useState(null);
   const [obsTransporterId, setObsTransporterId] = useState(null);
@@ -13,6 +19,7 @@ export default function ExecutionPane({
 
   // Local state for manual input before saving
   const [tempTarget, setTempTarget] = useState('');
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   // Local state for toggling rationale visibility
   const [expandedReasonings, setExpandedReasonings] = useState({});
@@ -21,6 +28,30 @@ export default function ExecutionPane({
   const toggleReasoning = (traceId) => {
     setExpandedReasonings(prev => ({ ...prev, [traceId]: !prev[traceId] }));
   };
+
+  // Live expiry countdown — ticks every second off the spot's lane_details.expiry_date, which
+  // playground stores as an ISO string with its own offset (e.g. +05:30), so `new Date(...)`
+  // parses it correctly regardless of the browser's own timezone.
+  const [nowTick, setNowTick] = useState(Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => setNowTick(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatCountdown = (dateStr, nowMs) => {
+    if (!dateStr) return null;
+    const remainingMs = new Date(dateStr).getTime() - nowMs;
+    if (Number.isNaN(remainingMs)) return null;
+    if (remainingMs <= 0) return 'Expired';
+    const totalSeconds = Math.floor(remainingMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const pad = (n) => String(n).padStart(2, '0');
+    return hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
+  };
+
+  const expiryCountdown = formatCountdown(expiryDate, nowTick);
 
   const formatMoney = (value) => {
     if (value === null || value === undefined || value === '') return '-';
@@ -222,7 +253,26 @@ export default function ExecutionPane({
           <span className={styles.headerSubtitle}>
             {spotDetails ? `${spotDetails.truckType?.label || spotDetails.truckType || 'Truck Type'} • ${spotDetails.dateOfPlacement || spotDetails.placementDate || ''}` : 'Please configure the spot in the sidebar'}
             {activeTransporter && ` • Negotiating with ${activeTransporter.transporter_name}`}
+            {expiryCountdown && (
+              <span style={{ marginLeft: '8px', fontVariantNumeric: 'tabular-nums', color: expiryCountdown === 'Expired' ? 'var(--brand-danger, #d64545)' : 'var(--text-secondary)' }}>
+                • {expiryCountdown === 'Expired' ? 'Expired' : `Expires in ${expiryCountdown}`}
+              </span>
+            )}
           </span>
+          {isColdLane && (
+            <div style={{ marginTop: '10px' }}>
+              <button
+                onClick={() => setShowConfigModal(true)}
+                style={{
+                  fontSize: '11px', fontWeight: 600, padding: '5px 10px', borderRadius: '999px',
+                  border: '1px solid var(--border-color)', background: 'var(--bg-surface)',
+                  color: 'var(--text-secondary)', cursor: 'pointer',
+                }}
+              >
+                ⚙ Cold Lane Config
+              </button>
+            </div>
+          )}
         </div>
 
         <div>
@@ -285,7 +335,7 @@ export default function ExecutionPane({
               const pending = pendingQuoteByTransporter?.[transporterId] != null;
               const statusTone = pending ? 'var(--status-warn)' : (lastQuote != null ? 'var(--status-ok)' : 'var(--text-tertiary)');
               const quoteExceeds = lastQuote != null && currentInput !== '' && Number(currentInput) > Number(lastQuote);
-              const canSubmit = !!computedTarget && !!currentInput && Number(currentInput) > 0 && !pending && !quoteExceeds && !loading;
+              const canSubmit = canQuote && !!currentInput && Number(currentInput) > 0 && !pending && !quoteExceeds && !loading;
 
               return (
                 <div
@@ -346,7 +396,7 @@ export default function ExecutionPane({
                       onClick={() => selectTransporter(transporterId)}
                       onChange={e => onTransporterQuoteInputChange(transporterId, e.target.value)}
                       placeholder="Quote"
-                      disabled={loading || pending || !computedTarget}
+                      disabled={loading || pending || !canQuote}
                       style={{
                         flex: 1,
                         minWidth: 0,
@@ -520,18 +570,18 @@ export default function ExecutionPane({
           <div className={styles.consoleInputRow}>
             <input
               type="number"
-              placeholder={computedTarget ? "Transporter quote (₹)" : "Set target rate first..."}
+              placeholder={canQuote ? "Transporter quote (₹)" : "Set target rate first..."}
               value={quoteInput}
               onChange={e => setQuoteInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && quoteInput && computedTarget && !quoteExceedsLastBid && onBidSubmit()}
-              disabled={loading || isQuotePending || !computedTarget}
+              onKeyDown={e => e.key === "Enter" && quoteInput && canQuote && !quoteExceedsLastBid && onBidSubmit()}
+              disabled={loading || isQuotePending || !canQuote}
               className={styles.quoteInput}
             />
             <button
               onClick={onBidSubmit}
-              disabled={loading || isQuotePending || !quoteInput || !computedTarget || quoteExceedsLastBid}
+              disabled={loading || isQuotePending || !quoteInput || !canQuote || quoteExceedsLastBid}
               className={styles.submitButton}
-              style={{ cursor: (loading || isQuotePending || !quoteInput || !computedTarget || quoteExceedsLastBid) ? 'not-allowed' : 'pointer', opacity: (loading || isQuotePending || !quoteInput || !computedTarget || quoteExceedsLastBid) ? 0.6 : 1 }}
+              style={{ cursor: (loading || isQuotePending || !quoteInput || !canQuote || quoteExceedsLastBid) ? 'not-allowed' : 'pointer', opacity: (loading || isQuotePending || !quoteInput || !canQuote || quoteExceedsLastBid) ? 0.6 : 1 }}
             >
               Submit bid
               <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
@@ -539,6 +589,64 @@ export default function ExecutionPane({
           </div>
         </div>
       </div>
+
+      {showConfigModal && coldLaneInfo && (
+        <div
+          onClick={() => setShowConfigModal(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'var(--bg-panel)', border: '1px solid var(--border-color)', borderRadius: '12px',
+              width: '440px', maxWidth: '90vw', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.35)',
+            }}
+          >
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>Cold Lane Configuration</span>
+              <button
+                onClick={() => setShowConfigModal(false)}
+                aria-label="Close"
+                style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', fontSize: '18px', cursor: 'pointer', lineHeight: 1, padding: '4px' }}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', padding: '18px' }}>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Mode</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.negotiationMode === 'get_me_best_price' ? 'Best price' : 'Get a truck'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rank visible</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.rankVisible ? 'Yes' : 'No'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Max rounds / vendor</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.maxRoundsPerTransporter ?? '—'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Model</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.model || '—'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Opening anchor</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.openingAnchorRate != null ? formatMoney(coldLaneInfo.openingAnchorRate) : '—'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rolling anchor</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.rollingAnchorRate != null ? formatMoney(coldLaneInfo.rollingAnchorRate) : '—'}</div>
+              </div>
+            </div>
+            <div style={{ padding: '10px 18px', borderTop: '1px solid var(--border-color)', fontSize: '11px', color: 'var(--text-tertiary)' }}>
+              Read-only — set at spot creation, not editable from here.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
