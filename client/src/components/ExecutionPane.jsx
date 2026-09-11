@@ -19,6 +19,7 @@ export default function ExecutionPane({
 
   // Local state for manual input before saving
   const [tempTarget, setTempTarget] = useState('');
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   // Local state for toggling rationale visibility
   const [expandedReasonings, setExpandedReasonings] = useState({});
@@ -258,6 +259,20 @@ export default function ExecutionPane({
               </span>
             )}
           </span>
+          {isColdLane && (
+            <div style={{ marginTop: '10px' }}>
+              <button
+                onClick={() => setShowConfigModal(true)}
+                style={{
+                  fontSize: '11px', fontWeight: 600, padding: '5px 10px', borderRadius: '999px',
+                  border: '1px solid var(--border-color)', background: 'var(--bg-surface)',
+                  color: 'var(--text-secondary)', cursor: 'pointer',
+                }}
+              >
+                ⚙ Cold Lane Config
+              </button>
+            </div>
+          )}
         </div>
 
         <div>
@@ -306,40 +321,6 @@ export default function ExecutionPane({
           )}
         </div>
       </div>
-
-      {isColdLane && (
-        <div style={{ marginBottom: '16px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--bg-surface)', overflow: 'hidden' }}>
-          <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-panel)', fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 700 }}>
-            Cold Lane Configuration (read-only)
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px', padding: '10px 12px', fontSize: '12px' }}>
-            <div>
-              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Mode</div>
-              <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{coldLaneInfo.negotiationMode === 'get_me_best_price' ? 'Best price' : 'Get a truck'}</div>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rank visible</div>
-              <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{coldLaneInfo.rankVisible ? 'Yes' : 'No'}</div>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Max rounds / vendor</div>
-              <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{coldLaneInfo.maxRoundsPerTransporter ?? '—'}</div>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Model</div>
-              <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{coldLaneInfo.model || '—'}</div>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Opening anchor</div>
-              <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{coldLaneInfo.openingAnchorRate != null ? formatMoney(coldLaneInfo.openingAnchorRate) : '—'}</div>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rolling anchor</div>
-              <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{coldLaneInfo.rollingAnchorRate != null ? formatMoney(coldLaneInfo.rollingAnchorRate) : '—'}</div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {selectedTransporters?.length > 0 && (
         <div style={{ marginBottom: '16px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--bg-surface)', overflow: 'hidden' }}>
@@ -608,6 +589,64 @@ export default function ExecutionPane({
           </div>
         </div>
       </div>
+
+      {showConfigModal && coldLaneInfo && (
+        <div
+          onClick={() => setShowConfigModal(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'var(--bg-panel)', border: '1px solid var(--border-color)', borderRadius: '12px',
+              width: '440px', maxWidth: '90vw', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.35)',
+            }}
+          >
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>Cold Lane Configuration</span>
+              <button
+                onClick={() => setShowConfigModal(false)}
+                aria-label="Close"
+                style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', fontSize: '18px', cursor: 'pointer', lineHeight: 1, padding: '4px' }}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', padding: '18px' }}>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Mode</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.negotiationMode === 'get_me_best_price' ? 'Best price' : 'Get a truck'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rank visible</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.rankVisible ? 'Yes' : 'No'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Max rounds / vendor</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.maxRoundsPerTransporter ?? '—'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Model</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.model || '—'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Opening anchor</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.openingAnchorRate != null ? formatMoney(coldLaneInfo.openingAnchorRate) : '—'}</div>
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rolling anchor</div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px', marginTop: '2px' }}>{coldLaneInfo.rollingAnchorRate != null ? formatMoney(coldLaneInfo.rollingAnchorRate) : '—'}</div>
+              </div>
+            </div>
+            <div style={{ padding: '10px 18px', borderTop: '1px solid var(--border-color)', fontSize: '11px', color: 'var(--text-tertiary)' }}>
+              Read-only — set at spot creation, not editable from here.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
