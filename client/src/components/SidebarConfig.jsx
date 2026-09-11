@@ -283,7 +283,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
               />
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
-              <label>Expiry Hours</label>
+              <label>Expiry Minutes</label>
               <input
                 type="number"
                 min="1"
@@ -291,7 +291,7 @@ export default function SidebarConfig({ appMode, config, updateConfig, handleSta
                 onChange={e => updateConfig("expiryHours", e.target.value)}
                 disabled={hasSession}
                 style={{ width: '100%' }}
-                placeholder="e.g. 24"
+                placeholder="e.g. 60"
               />
             </div>
             <div className={styles.formGroup} style={{ marginTop: '16px' }}>
