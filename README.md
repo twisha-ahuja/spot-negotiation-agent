@@ -7,7 +7,7 @@ human. Every call is optionally traced to Langfuse.
 
 Two pieces, run in two terminals:
 
-```
+``` 
 server/  FastAPI - negotiation orchestrator; holds the rates + prompt, and
          calls Claude/GPT/Gemini directly via the litellm Python SDK (Python)
 client/  React (Vite) - the chat UI (Node.js)
