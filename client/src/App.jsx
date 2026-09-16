@@ -7,6 +7,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import SidebarConfig from "./components/SidebarConfig";
 import ExecutionPane from "./components/ExecutionPane";
 import LandingPage from "./components/LandingPage";
+import EngineSettingsModal from "./components/EngineSettingsModal";
 import { getSessionTraces } from "./api/langfuseApi";
 
 const LEGACY_MODEL_ALIASES = {
@@ -79,6 +80,7 @@ export default function App() {
   // spot (no `cold_lane` subdoc), so the panel there simply doesn't render.
   const [coldLaneInfo, setColdLaneInfo] = useState(null);
   const [expiryDate, setExpiryDate] = useState(null);
+  const [showEngineSettings, setShowEngineSettings] = useState(false);
   const activeTabInitialized = React.useRef(false);
   const pendingQuoteRef = React.useRef({});
 
@@ -602,6 +604,13 @@ export default function App() {
         </div>
 
         <div className={styles.navActions}>
+          <button
+            className={styles.btnAction}
+            onClick={() => setShowEngineSettings(true)}
+            title="Global cold lane engine settings"
+          >
+            ⚙ Engine Settings
+          </button>
           <button className={styles.btnAction} onClick={() => { window.history.pushState({}, '', '/'); setAppMode('landing'); setSessionId(null); clearWorkspace(); }}>
             Exit to Home
           </button>
@@ -610,6 +619,10 @@ export default function App() {
           </button>
         </div>
       </header>
+
+      {showEngineSettings && (
+        <EngineSettingsModal onClose={() => setShowEngineSettings(false)} />
+      )}
 
       <div className={styles.workspace}>
         <SidebarConfig

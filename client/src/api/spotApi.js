@@ -287,3 +287,57 @@ export async function getAllowedModels() {
     return [];
   }
 }
+
+/**
+ * Fetches the global cold-lane engine settings (timing + discount-shaping knobs).
+ * These are global, not per-spot — they affect every cold lane, not just the one open right now.
+ */
+export async function getColdLaneSettings() {
+  const res = await fetch(`${AGENT_API_BASE}/spot/cold_lane_settings`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch cold lane settings: ${res.statusText}`);
+  }
+
+  return await res.json();
+}
+
+/**
+ * Updates one or more cold-lane engine settings. Only pass the fields that changed — anything
+ * omitted keeps its current value. Throws with the backend's validation error list (an array of
+ * plain-English messages) if the resulting combination is invalid.
+ */
+export async function updateColdLaneSettings(updates) {
+  const res = await fetch(`${AGENT_API_BASE}/spot/cold_lane_settings`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates)
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    const errors = Array.isArray(body?.detail) ? body.detail : [res.statusText];
+    throw new Error(errors.join(" "));
+  }
+
+  return await res.json();
+}
+
+/**
+ * Resets every cold-lane engine setting back to its hardcoded default.
+ */
+export async function resetColdLaneSettings() {
+  const res = await fetch(`${AGENT_API_BASE}/spot/cold_lane_settings/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to reset cold lane settings: ${res.statusText}`);
+  }
+
+  return await res.json();
+}
