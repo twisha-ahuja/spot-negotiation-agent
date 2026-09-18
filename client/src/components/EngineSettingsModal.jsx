@@ -15,7 +15,7 @@ const FIELD_GROUPS = [
       {
         key: 't_minus_x_minutes',
         label: 'Stop-waiting threshold (minutes)',
-        caption: "How long to keep waiting for more transporters to quote before negotiating with whoever's in. The final-call window is auto-derived from this (÷ 3)."
+        caption: "How long to keep waiting for more transporters to quote before negotiating with whoever's in. The final push window is auto-derived from this (÷ 3) — negotiation itself doesn't change there, it just revives anyone who'd gone quiet and been paused, once, for one last chance."
       },
       {
         key: 'min_reply_gap_minutes',
@@ -49,8 +49,8 @@ const FIELD_GROUPS = [
       },
       {
         key: 'rebroadcast_pct',
-        label: 'Rebroadcast threshold (%)',
-        caption: 'How much the best price in the lane must improve before other transporters get re-countered because of it.'
+        label: 'Movement / gap threshold (%)',
+        caption: "One shared threshold used three ways: how much the best price in the lane must improve before others get re-countered because of it, how much a transporter's own re-quote must move to count as new information, and how much cheaper the best price must be than a transporter's own quote for them to be worth asking at all."
       }
     ]
   },
@@ -115,7 +115,8 @@ export default function EngineSettingsModal({ onClose }) {
   const hasErrors = Object.keys(errors).length > 0;
 
   // t_minus_x_minutes / 3, recalculated live as the field is edited — same formula the backend
-  // uses (LAST_CALL_FRACTION), shown here so the derived value is never a mystery.
+  // uses (LAST_CALL_FRACTION), shown here so the derived value is never a mystery. This is the
+  // final PUSH window now, not a final-call/frozen-price mode — see the field's caption above.
   const derivedLastCall = values ? (Number(values.t_minus_x_minutes) / 3).toFixed(1) : null;
 
   const updateField = (key, raw) => {
@@ -227,7 +228,7 @@ export default function EngineSettingsModal({ onClose }) {
                         )}
                         {field.key === 't_minus_x_minutes' && !errors.t_minus_x_minutes && (
                           <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
-                            Final-call window: {derivedLastCall} min (auto = this ÷ 3)
+                            Final push window: {derivedLastCall} min (auto = this ÷ 3) — revives paused transporters once
                           </div>
                         )}
                       </div>
