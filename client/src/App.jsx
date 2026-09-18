@@ -117,12 +117,14 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  useEffect(() => {
+  // Extracted so it can be called both on session load and by the silent auto-refresh
+  // interval below (the cold-lane sweep counters autonomously in the backend with no
+  // pending-quote trigger, so without this periodic refresh those counters never show
+  // up in the playground until the page is manually reloaded).
+  const fetchSpotDetails = React.useCallback(async ({ silent = false } = {}) => {
     if (!sessionId) return;
-
-    const fetchSpotDetails = async () => {
-      setLoading(true);
-      try {
+    if (!silent) setLoading(true);
+    try {
         const res = await getPlaygroundSpotDetails(sessionId);
         const docs = Array.isArray(res) ? res : (res?.docs || []);
         if (docs.length > 0) {
@@ -222,7 +224,7 @@ export default function App() {
           }
 
           if (Object.keys(nextPending).length > 0) {
-            setLoading(true);
+            if (!silent) setLoading(true);
             setPolling(true);
           } else {
             setPolling(false);
@@ -239,14 +241,28 @@ export default function App() {
       } catch (err) {
         console.error("Failed to fetch spot details:", err);
       } finally {
-        if (!polling) {
+        if (!silent && !polling) {
           setLoading(false);
         }
       }
-    };
+  }, [sessionId, polling]);
 
+  useEffect(() => {
     fetchSpotDetails();
   }, [sessionId]);
+
+  // Silent auto-refresh: the cold-lane sweep can counter a transporter on its own schedule
+  // (no user bid, no pending_round flip), so this keeps the playground's rates/transcripts/
+  // cold-lane panel current without requiring a manual page reload. Stops once the spot has
+  // expired — nothing further will change on the backend at that point.
+  useEffect(() => {
+    if (!sessionId) return;
+    if (expiryDate && new Date(expiryDate).getTime() <= Date.now()) return;
+    const interval = setInterval(() => {
+      fetchSpotDetails({ silent: true });
+    }, 18000);
+    return () => clearInterval(interval);
+  }, [sessionId, expiryDate, fetchSpotDetails]);
 
   // Polling Hook for Async Agent Execution - resolves every transporter with a pending round
   useEffect(() => {
